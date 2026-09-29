@@ -1,0 +1,893 @@
+/* ═══════════════════════════════════════════════════════════
+   BookHaven Gothic Library — Master Stylesheet
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Google Fonts ─────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+
+/* ─── Reset & Base ─────────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-deep: #0b0704;
+  --gold: #d4a24c;
+  --gold-bright: #ffcc70;
+  --gold-dim: #9e7534;
+  --amber: #ffb347;
+  --parchment: #e8dcc4;
+  --parchment-light: #f5ede0;
+  --panel-bg: rgba(14, 10, 8, 0.94);
+}
+
+body {
+  background: var(--bg-deep);
+  color: var(--parchment);
+  font-family: 'EB Garamond', Georgia, serif;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+.gothic { font-family: 'Cinzel Decorative', serif; }
+.subheading { font-family: 'Cormorant Garamond', Georgia, serif; }
+
+/* ─── Screen Container ─────────────────────────────────── */
+.screen {
+  position: fixed;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+.screen.active { display: flex; }
+
+.screen-fade-in {
+  animation: screenFadeIn 0.5s ease-out forwards;
+}
+@keyframes screenFadeIn {
+  from { opacity: 0; transform: scale(1.01); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ─── Full-Bleed Background ────────────────────────────── */
+.bg-fullbleed {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: brightness(0.96) contrast(1.04);
+  z-index: 0;
+}
+
+.bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 40%, rgba(0,0,0,0.45) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ─── Video Background ─────────────────────────────────── */
+.door-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
+/* ─── Ghost Buttons (No Yellow Boxes!) ───────────────── */
+.btn-ghost {
+  padding: 8px 18px;
+  background: rgba(10, 7, 5, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 162, 76, 0.25);
+  border-radius: 8px;
+  color: var(--parchment-light);
+  font-family: 'Cinzel Decorative', serif;
+  letter-spacing: 0.15em;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+}
+.btn-ghost:hover {
+  background: rgba(30, 20, 14, 0.85);
+  border-color: rgba(255, 204, 112, 0.6);
+  color: var(--gold-bright);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 25px rgba(212, 162, 76, 0.2);
+}
+
+/* ─── Door Dialogue Box ─────────────────────────────────── */
+.dialogue-box {
+  position: absolute;
+  bottom: 22%;
+  left: 8%;
+  width: 320px;
+  max-width: 80vw;
+  background: rgba(12, 9, 6, 0.8);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 162, 76, 0.3);
+  padding: 18px;
+  border-radius: 12px;
+  z-index: 10;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+  transition: opacity 0.5s ease;
+}
+.dialogue-box .speaker {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 11px;
+  color: var(--gold-bright);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.dialogue-box .quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  color: var(--parchment-light);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.door-prompt {
+  position: absolute;
+  bottom: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  transition: opacity 0.5s ease;
+}
+
+/* ─── Header Bar ───────────────────────────────────────── */
+.header {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: auto;
+}
+
+/* ─── Invisible Hotspots ───────────────────────────────── */
+.hotspot {
+  position: absolute;
+  cursor: pointer;
+  z-index: 15;
+  border-radius: 10px;
+  transition: background 0.3s ease, outline 0.3s ease;
+}
+.hotspot:hover {
+  background: rgba(212, 162, 76, 0.08);
+  outline: 1px dashed rgba(212, 162, 76, 0.3);
+}
+
+/* ─── Genre Tooltips ───────────────────────────────────── */
+.genre-tooltip {
+  position: absolute;
+  top: -46px;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  min-width: 190px;
+  background: rgba(12, 8, 6, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 162, 76, 0.35);
+  padding: 6px 12px;
+  border-radius: 8px;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 30;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+}
+.hotspot:hover .genre-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.genre-tooltip h4 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 0.72rem;
+  color: var(--gold-bright);
+}
+
+/* ─── LIBRARIAN POD & SPEECH BUBBLE (Master Keith) ─────── */
+.librarian-pod {
+  position: absolute;
+  left: 8%;
+  bottom: 26%;
+  width: 320px;
+  max-width: 36vw;
+  background: rgba(14, 9, 6, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(212, 162, 76, 0.4);
+  border-radius: 14px;
+  padding: 16px 18px;
+  z-index: 25;
+  cursor: pointer;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.85), inset 0 0 15px rgba(212, 162, 76, 0.08);
+  transition: all 0.3s ease;
+}
+.librarian-pod:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 204, 112, 0.6);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.9), 0 0 20px rgba(212, 162, 76, 0.2);
+}
+.librarian-pod::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 36px;
+  border-width: 10px 10px 0 10px;
+  border-style: solid;
+  border-color: rgba(14, 9, 6, 0.92) transparent transparent transparent;
+}
+.librarian-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(212, 162, 76, 0.2);
+  padding-bottom: 6px;
+}
+.candle-glow {
+  font-size: 1rem;
+  animation: candleFlicker 3s infinite alternate;
+}
+@keyframes candleFlicker {
+  0% { transform: scale(1) rotate(0deg); opacity: 0.9; }
+  50% { transform: scale(1.15) rotate(2deg); opacity: 1; filter: drop-shadow(0 0 6px #ffb347); }
+  100% { transform: scale(0.95) rotate(-2deg); opacity: 0.85; }
+}
+.librarian-name {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 0.72rem;
+  color: var(--gold-bright);
+  letter-spacing: 0.15em;
+  font-weight: bold;
+}
+.librarian-hint {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.68rem;
+  color: rgba(232, 220, 196, 0.5);
+  font-style: italic;
+  margin-left: auto;
+}
+.librarian-close-btn {
+  background: none;
+  border: none;
+  color: rgba(232, 220, 196, 0.5);
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 1px 6px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: all 0.2s;
+  margin-left: 6px;
+}
+.librarian-close-btn:hover {
+  color: var(--gold-bright);
+  background: rgba(255, 255, 255, 0.12);
+}
+.librarian-quote {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.92rem;
+  color: var(--parchment-light);
+  line-height: 1.5;
+  font-style: italic;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  transition: opacity 0.3s;
+}
+.librarian-pulse {
+  animation: libPulse 0.6s ease-out;
+}
+@keyframes libPulse {
+  0% { box-shadow: 0 0 5px rgba(255, 179, 71, 0.2); }
+  50% { box-shadow: 0 0 35px rgba(255, 179, 71, 0.6), inset 0 0 20px rgba(255, 179, 71, 0.2); }
+  100% { box-shadow: 0 12px 35px rgba(0,0,0,0.85); }
+}
+
+/* ─── SHELF CATALOGUE DRAWER (Right DOCKED: Keeps Librarian Visible!) ─── */
+.shelf-drawer {
+  position: fixed;
+  top: 68px;
+  right: 20px;
+  bottom: 20px;
+  width: 530px;
+  max-width: 48vw;
+  background: var(--panel-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(212, 162, 76, 0.35);
+  border-radius: 16px;
+  box-shadow: -15px 15px 60px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.8);
+  display: flex;
+  flex-direction: column;
+  z-index: 35;
+  transform: translateX(110%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+.shelf-drawer.active {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer-header {
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid rgba(212, 162, 76, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.drawer-header .label {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 0.68rem;
+  color: var(--gold-bright);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.shelf-count-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  color: rgba(232, 220, 196, 0.7);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+.shelf-librarian-box {
+  margin: 12px 18px 6px;
+  padding: 10px 14px;
+  background: rgba(212, 162, 76, 0.08);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.sl-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+.sl-text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.86rem;
+  color: var(--gold-bright);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.drawer-books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  padding: 12px 18px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.drawer-footer {
+  padding: 10px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.72rem;
+  color: rgba(232, 220, 196, 0.5);
+  text-align: center;
+}
+
+/* ─── QUICK SHELF BROWSER BAR ──────────────────────────── */
+.shelf-browser-bar {
+  position: absolute;
+  top: 64px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  width: 90%;
+  max-width: 980px;
+  max-height: 75vh;
+  background: rgba(12, 8, 6, 0.95);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(212, 162, 76, 0.4);
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.95);
+  z-index: 38;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.shelf-browser-bar.active {
+  display: flex;
+  transform: translateX(-50%) translateY(0);
+}
+.shelf-bar-header {
+  padding: 14px 20px;
+  background: rgba(0,0,0,0.4);
+  border-bottom: 1px solid rgba(212, 162, 76, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.shelf-bar-header .label {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 0.75rem;
+  color: var(--gold-bright);
+  letter-spacing: 0.15em;
+}
+.shelf-close-btn {
+  background: none;
+  border: none;
+  color: rgba(232,220,196,0.6);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px;
+}
+.shelf-close-btn:hover { color: var(--gold-bright); }
+
+.shelf-pills-grid {
+  padding: 16px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+.shelf-pill-card {
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(212, 162, 76, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.shelf-pill-card:hover {
+  background: rgba(212, 162, 76, 0.12);
+  border-color: rgba(255, 204, 112, 0.5);
+  transform: translateY(-2px);
+}
+.shelf-pill-card .spc-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 0.75rem;
+  color: var(--gold-bright);
+}
+.shelf-pill-card .spc-category {
+  font-size: 0.65rem;
+  color: rgba(232,220,196,0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ─── BOOK DETAIL DRAWER (Right Docked: Leaves Librarian Visible!) ─── */
+.book-drawer {
+  position: fixed;
+  top: 68px;
+  right: 20px;
+  bottom: 20px;
+  width: 540px;
+  max-width: 48vw;
+  background: var(--panel-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(212, 162, 76, 0.4);
+  border-radius: 16px;
+  box-shadow: -15px 15px 60px rgba(0,0,0,0.95);
+  display: flex;
+  flex-direction: column;
+  z-index: 45;
+  transform: translateX(110%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  overflow: hidden;
+}
+.book-drawer.active {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer-body {
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 18px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.cover-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Custom Gothic Leather Book Cover Fallback ─────────── */
+.custom-book-cover {
+  width: 100%;
+  aspect-ratio: 2/3;
+  background: linear-gradient(135deg, #2a1810 0%, #170d08 50%, #0d0704 100%);
+  border: 2px solid #d4a24c;
+  border-radius: 6px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.7), inset 0 0 15px rgba(212, 162, 76, 0.2);
+}
+.cbc-border {
+  border: 1px solid rgba(212, 162, 76, 0.5);
+  height: 100%;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: rgba(0,0,0,0.25);
+}
+.cbc-star { color: #ffcc70; font-size: 0.9rem; margin-bottom: 4px; }
+.cbc-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 0.72rem;
+  color: #f5ede0;
+  font-weight: bold;
+  line-height: 1.25;
+  margin-bottom: 4px;
+}
+.cbc-divider {
+  width: 24px;
+  height: 1px;
+  background: #d4a24c;
+  margin: 3px 0 5px;
+}
+.cbc-author {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.72rem;
+  color: #d4a24c;
+  font-style: italic;
+}
+.cbc-genre {
+  font-size: 0.55rem;
+  color: rgba(232, 220, 196, 0.5);
+  text-transform: uppercase;
+  margin-top: auto;
+  letter-spacing: 0.08em;
+}
+
+/* ─── Book Action Toast (Personalized Librarian response) ─ */
+.book-action-toast {
+  margin: 10px 18px 0;
+  padding: 10px 14px;
+  background: rgba(255, 179, 71, 0.12);
+  border: 1px solid rgba(255, 179, 71, 0.4);
+  border-left: 4px solid var(--amber);
+  border-radius: 6px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  animation: toastFadeIn 0.3s ease-out;
+}
+@keyframes toastFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.bat-icon { font-size: 1.1rem; }
+.bat-speaker {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 0.65rem;
+  color: var(--gold-bright);
+  font-weight: bold;
+  letter-spacing: 0.1em;
+}
+.bat-text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.88rem;
+  color: var(--parchment-light);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+/* ─── MODAL / BACKDROP (Only for Search & Saved Folios) ─── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 3, 2, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 50;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal-backdrop.active { display: flex; }
+
+.modal-panel {
+  position: relative;
+  z-index: 51;
+  width: 100%;
+  max-width: 860px;
+  max-height: 88vh;
+  background: rgba(14, 10, 8, 0.94);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(212, 162, 76, 0.35);
+  border-radius: 16px;
+  box-shadow: 0 25px 70px rgba(0,0,0,0.95);
+  overflow-y: auto;
+  animation: modalIn 0.3s ease-out;
+}
+
+/* ─── MASTER KEITH'S BESPOKE COMMENT BOX IN MODAL ─────── */
+.librarian-book-quote-box {
+  margin: 12px 0 16px;
+  padding: 12px 16px;
+  background: rgba(212, 162, 76, 0.09);
+  border: 1px solid rgba(212, 162, 76, 0.3);
+  border-left: 4px solid var(--gold);
+  border-radius: 6px;
+  box-shadow: inset 0 0 15px rgba(212, 162, 76, 0.05);
+}
+.lb-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.feather-icon { font-size: 0.9rem; }
+.lb-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 0.68rem;
+  color: var(--gold-bright);
+  letter-spacing: 0.15em;
+}
+.lb-quote {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.95rem;
+  color: var(--parchment-light);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ─── Book Cover ───────────────────────────────────────── */
+.book-cover {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(212, 162, 76, 0.25);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* ─── Book Card in Grid ────────────────────────────────── */
+.book-card {
+  padding: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(212, 162, 76, 0.2);
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  transition: all 0.25s ease;
+}
+.book-card:hover {
+  background: rgba(212, 162, 76, 0.1);
+  border-color: rgba(255, 204, 112, 0.5);
+  transform: translateY(-3px);
+}
+.book-card.bookmarked {
+  border: 1.5px solid #ffcc70 !important;
+  background: rgba(212, 162, 76, 0.16) !important;
+  box-shadow: 0 0 16px rgba(255, 204, 112, 0.35), inset 0 0 10px rgba(255, 179, 71, 0.12) !important;
+  position: relative;
+}
+.card-bookmark-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: linear-gradient(135deg, #d4a24c, #ffb347);
+  color: #120a05;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 0.55rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  z-index: 2;
+  pointer-events: none;
+}
+.spc-bm-count {
+  font-size: 0.62rem;
+  color: #ffcc70;
+  margin-left: auto;
+  font-weight: bold;
+}
+
+.book-card img {
+  width: 52px;
+  height: 76px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+.book-card .info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.book-card .info h4 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 0.76rem;
+  color: var(--parchment-light);
+  line-height: 1.3;
+}
+.book-card:hover .info h4 { color: var(--gold-bright); }
+.book-card .info .author {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.74rem;
+  color: var(--gold);
+  font-style: italic;
+  margin-top: 3px;
+}
+.book-card .info .rating {
+  font-size: 0.68rem;
+  color: var(--gold-bright);
+  margin-top: 4px;
+}
+
+/* ─── Tabletop Active Folio Banner ─────────────────────── */
+.tabletop-preview-pill {
+  position: absolute;
+  top: 68px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(12, 8, 6, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 162, 76, 0.35);
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 20;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+}
+
+/* ─── Actions Row ──────────────────────────────────────── */
+.actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin-top: 14px;
+}
+
+.btn-action {
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(212, 162, 76, 0.25);
+  border-radius: 8px;
+  color: var(--parchment);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.25s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+}
+.btn-action:hover {
+  background: rgba(212, 162, 76, 0.15);
+  border-color: rgba(255, 204, 112, 0.6);
+  color: var(--gold-bright);
+}
+.btn-action.bookmarked-active {
+  background: var(--amber);
+  color: #1a120b;
+  font-weight: bold;
+  border-color: transparent;
+  box-shadow: 0 0 15px rgba(255,179,71,0.5);
+}
+
+/* ─── Metadata Grid ────────────────────────────────────── */
+.meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(212, 162, 76, 0.2);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: rgba(232,220,196,0.8);
+  margin: 12px 0;
+}
+.meta-grid .label { color: var(--gold-bright); }
+
+/* ─── Status Badge ─────────────────────────────────────── */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 10px;
+}
+.status-badge.reading { background: rgba(255,179,71,0.2); border: 1px solid rgba(255,179,71,0.4); color: var(--gold-bright); }
+.status-badge.finished { background: rgba(212,162,76,0.2); border: 1px solid rgba(212,162,76,0.4); color: var(--gold); }
+.status-badge.unread { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(232,220,196,0.7); }
+
+/* ─── Search Overlay ───────────────────────────────────── */
+.search-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--parchment-light);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  outline: none;
+}
+.search-input::placeholder { color: rgba(232,220,196,0.4); }
+
+/* ─── Footer ───────────────────────────────────────────── */
+.footer {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  padding: 8px 16px;
+  background: rgba(0,0,0,0.6);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.72rem;
+  color: rgba(232,220,196,0.6);
+  margin-top: auto;
+}
+
+/* ─── Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0b0704; }
+::-webkit-scrollbar-thumb { background: #3e2617; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #6b4423; }
+
+/* ─── Dust Particles ───────────────────────────────────── */
+.dust-particle {
+  position: fixed;
+  background: radial-gradient(circle, rgba(255,204,112,0.6) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 5;
+  animation: floatDust linear infinite;
+}
+@keyframes floatDust {
+  0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+  20% { opacity: 0.5; }
+  80% { opacity: 0.5; }
+  100% { transform: translateY(-140px) translateX(30px) rotate(180deg); opacity: 0; }
+}

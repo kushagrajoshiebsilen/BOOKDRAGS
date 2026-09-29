@@ -1,0 +1,19 @@
+# Node dependencies
+node_modules/
+dist/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.venv
+env/
+venv/
+ENV/
+
+# System / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

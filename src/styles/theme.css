@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-deep: #0d0805;
+    --bg-dark: #1a120b;
+    --bg-medium: #2b1d12;
+    --wood-dark: #3d2817;
+    --wood-primary: #4a2f1c;
+    --wood-light: #6b4423;
+    --gold-primary: #d4a24c;
+    --gold-dark: #b8860b;
+    --gold-bright: #ffcc70;
+    --parchment: #e8dcc4;
+    --parchment-light: #f0e6d2;
+    --amber-pulse: #ffb347;
+  }
+
+  body {
+    background-color: var(--bg-deep);
+    color: var(--parchment);
+    font-family: 'EB Garamond', Georgia, serif;
+  }
+
+  h1, h2, h3, .font-gothic {
+    font-family: 'Cinzel Decorative', 'UnifrakturCook', 'Cormorant Garamond', serif;
+  }
+
+  .font-subheading {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+}
+
+/* Responsive Door Screen Background CSS */
+.door-screen-closed {
+  background-image: url('/assets/door-mobile.png');
+  background-size: cover;
+  background-position: center center;
+}
+
+@media (min-width: 1024px) {
+  .door-screen-closed {
+    background-image: url('/assets/door-desktop.png');
+    background-size: cover;
+    background-position: center center;
+  }
+}
+
+.door-screen-open {
+  background-image: url('/assets/door-open-mobile.png');
+  background-size: cover;
+  background-position: center center;
+}
+
+@media (min-width: 1024px) {
+  .door-screen-open {
+    background-image: url('/assets/door-open-desktop.png');
+    background-size: cover;
+    background-position: center center;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0d0805;
+  border-left: 1px solid #3d2817;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4a2f1c;
+  border: 1px solid #d4a24c;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b4423;
+}
+
+/* Candle Flicker */
+@keyframes candleFlicker {
+  0%, 100% {
+    opacity: 0.85;
+    filter: drop-shadow(0 0 12px rgba(212, 162, 76, 0.4));
+  }
+  25% {
+    opacity: 0.95;
+    filter: drop-shadow(0 0 18px rgba(255, 204, 112, 0.6));
+  }
+  50% {
+    opacity: 0.75;
+    filter: drop-shadow(0 0 9px rgba(184, 134, 11, 0.3));
+  }
+  75% {
+    opacity: 0.90;
+    filter: drop-shadow(0 0 15px rgba(212, 162, 76, 0.5));
+  }
+}
+
+.animate-candle-flicker {
+  animation: candleFlicker 3.5s ease-in-out infinite;
+}
+
+/* Pulse Amber Bookmark Glow */
+@keyframes bookmarkAmberPulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(255, 179, 71, 0.4), inset 0 0 12px rgba(255, 179, 71, 0.2);
+    border-color: rgba(255, 179, 71, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(255, 179, 71, 0.95), inset 0 0 20px rgba(255, 179, 71, 0.4);
+    border-color: rgba(255, 204, 112, 1);
+  }
+}
+
+.animate-bookmark-pulse {
+  animation: bookmarkAmberPulse 2s ease-in-out infinite;
+}
+
+/* Dust Motes */
+@keyframes floatDust {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-120px) translateX(30px) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+.dust-mote {
+  position: absolute;
+  background: radial-gradient(circle, rgba(255, 204, 112, 0.8) 0%, rgba(212, 162, 76, 0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: floatDust linear infinite;
+}
+
+.gothic-box-shadow {
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.8), 0 0 15px rgba(212, 162, 76, 0.15);
+}

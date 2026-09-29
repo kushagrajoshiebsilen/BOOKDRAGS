@@ -1,0 +1,58 @@
+[
+  {
+    "id": "gothic-academia",
+    "name": "Gothic & Dark Academia",
+    "shelfPositionId": "shelf-1",
+    "description": "Tomes of tragic obsession, secret societies, eerie estates, and shadowy campus corridors.",
+    "icon": "Skull"
+  },
+  {
+    "id": "classics-philosophy",
+    "name": "Classics & Ancient Philosophy",
+    "shelfPositionId": "shelf-2",
+    "description": "Foundational texts on virtue, metaphysics, mortal duty, and timeless human struggle.",
+    "icon": "Scroll"
+  },
+  {
+    "id": "mystery-occult",
+    "name": "Mystery & Occult Detectives",
+    "shelfPositionId": "shelf-3",
+    "description": "Unsolved enigmas, Victorian sleuths, esoteric symbols, and fog-draped mysteries.",
+    "icon": "Search"
+  },
+  {
+    "id": "fantasy-antiquity",
+    "name": "High Fantasy & Mythic Lore",
+    "shelfPositionId": "shelf-4",
+    "description": "Ancient realms, forgotten crowns, dragons, eldritch oaths, and epic sagas.",
+    "icon": "Crown"
+  },
+  {
+    "id": "horror-cosmic",
+    "name": "Horror & Cosmic Dread",
+    "shelfPositionId": "shelf-5",
+    "description": "Chilling tales of uncanny beasts, madness, unknown voids, and haunted spirits.",
+    "icon": "Ghost"
+  },
+  {
+    "id": "historical-lore",
+    "name": "Historical Lore & Chronicle",
+    "shelfPositionId": "shelf-6",
+    "description": "Factual and fictional chronicles of empires, medieval kings, and ancient wars.",
+    "icon": "Shield"
+  },
+  {
+    "id": "scifi-speculative",
+    "name": "Speculative & Alchemy",
+    "shelfPositionId": "shelf-7",
+    "description": "Steam-powered automata, alchemy, gothic clockwork, and precursor sciences.",
+    "icon": "Compass"
+  },
+  {
+    "id": "poetry-romanticism",
+    "name": "Poetry & Romantic Melancholy",
+    "shelfPositionId": "shelf-8",
+    "description": "Elegies of loss, night, nature's solitude, and tragic romance by candlelight.",
+    "icon": "Feather"
+  }
+]

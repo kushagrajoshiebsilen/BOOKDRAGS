@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookHaven — Gothic Library Archives</title>
+  <meta name="description" content="A cinematic gothic library book recommendation app powered by Python Flask. Discover over 540 verified books across 20 majestic shelves.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SCREEN 1: DOOR ENTRY (Video)
+       ═══════════════════════════════════════════════════════ -->
+  <div id="door-screen" class="screen active" onclick="openDoor()">
+    <video id="door-video" class="door-video" preload="auto" playsinline muted
+           src="{{ url_for('static', filename='assets/front_door_video.mp4') }}"></video>
+    <div class="bg-overlay"></div>
+
+    <!-- Gatekeeper Dialogue -->
+    <div id="door-dialogue" class="dialogue-box">
+      <div class="speaker">THE GATEKEEPER</div>
+      <p id="gatekeeper-quote" class="quote"></p>
+    </div>
+
+    <!-- Door Action Prompt -->
+    <div id="door-prompt" class="door-prompt">
+      <button class="btn-ghost" onclick="openDoor()">PUSH OPEN THE IRON DOORS</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SCREEN 2: MAIN LIBRARY (3_library_inside_view.png)
+       ═══════════════════════════════════════════════════════ -->
+  <div id="library-screen" class="screen">
+    <img class="bg-fullbleed" src="{{ url_for('static', filename='assets/3_library_inside_view.png') }}" alt="Main Library">
+    <div class="bg-overlay"></div>
+
+    <!-- Top Navigation Header -->
+    <div class="header">
+      <div class="brand-group">
+        <div class="btn-ghost" style="pointer-events:none;font-size:0.8rem;letter-spacing:0.18em;">
+          ✦ BOOKHAVEN ARCHIVES (567 FOLIOS)
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button class="btn-ghost" onclick="toggleShelfBrowser()">📚 <span>SHELVES (21)</span></button>
+        <button class="btn-ghost" onclick="openSearch()">🔍 <span>SEARCH</span></button>
+        <button class="btn-ghost" onclick="showScreen('reading-screen')">📖 <span>READING ROOM</span></button>
+      </div>
+    </div>
+
+    <!-- ─── MASTER KEITH (LIBRARIAN POD & SPEECH BUBBLE) ─── -->
+    <!-- Positioned directly over/next to the Librarian at the lower-left desk -->
+    <div id="librarian-bubble" class="librarian-pod">
+      <div class="librarian-header">
+        <span class="candle-glow">🕯️</span>
+        <span class="librarian-name">ARCHIVIST KEITH</span>
+        <span class="librarian-hint" onclick="fetchNewLibrarianGreeting()" style="cursor:pointer;" title="Click for advice">(Click for advice)</span>
+        <button class="librarian-close-btn" onclick="event.stopPropagation(); closeLibrarianBubble();" title="Close dialogue">✕</button>
+      </div>
+      <p id="librarian-text" class="librarian-quote" onclick="fetchNewLibrarianGreeting()" title="Click to hear more advice"></p>
+    </div>
+
+    <!-- Librarian Desk Click Hotspot -->
+    <div class="hotspot librarian-hotspot" style="left:10%;top:64%;width:20%;height:32%;" onclick="openOrCycleLibrarian()">
+      <div class="genre-tooltip"><h4>Archivist Keith • Chief Librarian</h4><p style="font-size:0.65rem;color:#e8dcc4;">Click to converse</p></div>
+    </div>
+
+    <!-- ─── 21 SHELF HOTSPOTS (Mapped across 3 Tiers & 5 Columns) ─── -->
+    <!-- COLUMN 1 (Far Left) -->
+    <div class="hotspot" style="left:5%;top:8%;width:15%;height:18%;" onclick="openGenreDrawer('self-help')">
+      <div class="genre-tooltip"><h4>Self-Help & Habits</h4><p style="font-size:0.65rem;color:#ffcc70;">Ikigai, Atomic Habits, Subconscious Mind</p></div>
+    </div>
+    <div class="hotspot" style="left:5%;top:28%;width:15%;height:18%;" onclick="openGenreDrawer('self-development')">
+      <div class="genre-tooltip"><h4>Self-Development & Mastery</h4><p style="font-size:0.65rem;color:#ffcc70;">Can't Hurt Me, 12 Rules for Life, 48 Laws</p></div>
+    </div>
+    <div class="hotspot" style="left:5%;top:48%;width:15%;height:18%;" onclick="openGenreDrawer('business-finance')">
+      <div class="genre-tooltip"><h4>Money & Business</h4><p style="font-size:0.65rem;color:#ffcc70;">Rich Dad Poor Dad, Psychology of Money</p></div>
+    </div>
+    <div class="hotspot" style="left:2%;top:68%;width:8%;height:26%;" onclick="openGenreDrawer('indian-literature')">
+      <div class="genre-tooltip"><h4>Indian Masterpieces</h4><p style="font-size:0.65rem;color:#ffcc70;">Malgudi Days, Train to Pakistan, The Guide</p></div>
+    </div>
+
+    <!-- COLUMN 2 (Left-Center) -->
+    <div class="hotspot" style="left:22%;top:8%;width:16%;height:24%;" onclick="openGenreDrawer('ancient-wisdom')">
+      <div class="genre-tooltip"><h4>Vedic & Ancient Epics</h4><p style="font-size:0.65rem;color:#ffcc70;">Bhagavad Gita, Mahabharata, Chanakya Neeti</p></div>
+    </div>
+    <div class="hotspot" style="left:22%;top:34%;width:16%;height:24%;" onclick="openGenreDrawer('psychology')">
+      <div class="genre-tooltip"><h4>Mind, Behavior & Soul</h4><p style="font-size:0.65rem;color:#ffcc70;">Thinking Fast & Slow, Man's Search For Meaning</p></div>
+    </div>
+    <div class="hotspot" style="left:31%;top:60%;width:12%;height:30%;" onclick="openGenreDrawer('philosophy')">
+      <div class="genre-tooltip"><h4>Stoicism & Philosophy</h4><p style="font-size:0.65rem;color:#ffcc70;">Meditations, Letters from a Stoic, Plato</p></div>
+    </div>
+
+    <!-- COLUMN 3 (Grand Center Vault) -->
+    <div class="hotspot" style="left:40%;top:6%;width:20%;height:24%;" onclick="openGenreDrawer('history-chronicles')">
+      <div class="genre-tooltip"><h4>Chronicles of Empires</h4><p style="font-size:0.65rem;color:#ffcc70;">Discovery of India, India After Gandhi, Silk Roads</p></div>
+    </div>
+    <div class="hotspot" style="left:40%;top:32%;width:20%;height:26%;" onclick="openGenreDrawer('science')">
+      <div class="genre-tooltip"><h4>Cosmos & Scientific Wonder</h4><p style="font-size:0.65rem;color:#ffcc70;">Cosmos, Brief History of Time, Sapiens</p></div>
+    </div>
+    <div class="hotspot" style="left:44%;top:60%;width:16%;height:32%;" onclick="openGenreDrawer('technology')">
+      <div class="genre-tooltip"><h4>Code, Algorithms & Python</h4><p style="font-size:0.65rem;color:#ffcc70;">Fluent Python, Automate the Boring Stuff, Clean Code</p></div>
+    </div>
+
+    <!-- COLUMN 4 (Right-Center) -->
+    <div class="hotspot" style="left:62%;top:8%;width:16%;height:24%;" onclick="openGenreDrawer('crime-thriller')">
+      <div class="genre-tooltip"><h4>Enigmas & Detective Sleuths</h4><p style="font-size:0.65rem;color:#ffcc70;">Sherlock Holmes, Feluda, Byomkesh Bakshi</p></div>
+    </div>
+    <div class="hotspot" style="left:62%;top:34%;width:16%;height:24%;" onclick="openGenreDrawer('horror-gothic')">
+      <div class="genre-tooltip"><h4>Gothic Dread & Cosmic Fear</h4><p style="font-size:0.65rem;color:#ffcc70;">Frankenstein, Dracula, The Shining</p></div>
+    </div>
+    <div class="hotspot" style="left:62%;top:60%;width:14%;height:32%;" onclick="openGenreDrawer('mythology')">
+      <div class="genre-tooltip"><h4>Mythic Sagas & Ancient Gods</h4><p style="font-size:0.65rem;color:#ffcc70;">Shiva Trilogy, Palace of Illusions, Song of Achilles</p></div>
+    </div>
+
+    <!-- COLUMN 5 (Far Right) -->
+    <div class="hotspot" style="left:80%;top:8%;width:16%;height:22%;" onclick="openGenreDrawer('fantasy')">
+      <div class="genre-tooltip"><h4>High Fantasy & Magic</h4><p style="font-size:0.65rem;color:#ffcc70;">Lord of the Rings, Game of Thrones, Mistborn</p></div>
+    </div>
+    <div class="hotspot" style="left:80%;top:32%;width:16%;height:24%;" onclick="openGenreDrawer('dystopian')">
+      <div class="genre-tooltip"><h4>Dystopian Visions</h4><p style="font-size:0.65rem;color:#ffcc70;">1984, Brave New World, Fahrenheit 451</p></div>
+    </div>
+    <div class="hotspot" style="left:78%;top:58%;width:10%;height:34%;" onclick="openGenreDrawer('biography')">
+      <div class="genre-tooltip"><h4>Lives of Immortals</h4><p style="font-size:0.65rem;color:#ffcc70;">Wings of Fire, Autobiography of a Yogi, Steve Jobs</p></div>
+    </div>
+
+    <!-- ADDITIONAL SHELVES & CORNERS -->
+    <div class="hotspot" style="left:2%;top:8%;width:6%;height:50%;" onclick="openGenreDrawer('classics')">
+      <div class="genre-tooltip"><h4>World Classics</h4><p style="font-size:0.65rem;color:#ffcc70;">Crime & Punishment, War & Peace</p></div>
+    </div>
+    <div class="hotspot" style="left:94%;top:8%;width:5%;height:50%;" onclick="openGenreDrawer('health-wellness')">
+      <div class="genre-tooltip"><h4>Vitality & Longevity</h4><p style="font-size:0.65rem;color:#ffcc70;">Why We Sleep, Breath, Wim Hof Method</p></div>
+    </div>
+    <div class="hotspot" style="left:89%;top:60%;width:10%;height:32%;" onclick="openGenreDrawer('romance-drama')">
+      <div class="genre-tooltip"><h4>Tragic Romance</h4><p style="font-size:0.65rem;color:#ffcc70;">Pride & Prejudice, Normal People</p></div>
+    </div>
+    <div class="hotspot" style="left:20%;top:60%;width:10%;height:32%;" onclick="openGenreDrawer('poetry-ghazals')">
+      <div class="genre-tooltip"><h4>Poetry & Ghazals</h4><p style="font-size:0.65rem;color:#ffcc70;">Gitanjali, Diwan-e-Ghalib, Madhushala</p></div>
+    </div>
+    <div class="hotspot" style="left:88%;top:38%;width:8%;height:20%;" onclick="openGenreDrawer('young-adult')">
+      <div class="genre-tooltip"><h4>Coming of Age & Quests</h4><p style="font-size:0.65rem;color:#ffcc70;">Percy Jackson, Harry Potter, Ruskin Bond</p></div>
+    </div>
+
+    <!-- Quick Shelf Browser Dropdown / Modal Bar -->
+    <div id="shelf-browser-bar" class="shelf-browser-bar">
+      <div class="shelf-bar-header">
+        <span class="label">✦ SELECT AN ARCHIVE SHELF (21 SHELVES • 567 FOLIOS)</span>
+        <button class="shelf-close-btn" onclick="toggleShelfBrowser()">✕</button>
+      </div>
+      <div id="shelf-pills-container" class="shelf-pills-grid"></div>
+    </div>
+
+    <div class="footer">Hover any shelf column or click Master Keith • Press / to search 567 books</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SHELF CATALOGUE DRAWER (Docks on Right Half: Keeps Librarian in Full View!)
+       ═══════════════════════════════════════════════════════ -->
+  <div id="shelf-drawer" class="shelf-drawer">
+    <div class="drawer-header">
+      <div>
+        <div class="label">✦ SHELF ARCHIVE RECORD</div>
+        <h2 id="shelf-drawer-title" class="gothic" style="font-size:1.3rem;color:#f0e6d2;margin-top:2px;"></h2>
+        <span id="shelf-drawer-count" class="shelf-count-badge">27 Folios Available</span>
+      </div>
+      <button class="modal-close" onclick="closeGenreDrawer()">✕</button>
+    </div>
+
+    <!-- Librarian advice for this shelf -->
+    <div id="shelf-librarian-note" class="shelf-librarian-box">
+      <span class="sl-icon">🕯️</span>
+      <p id="shelf-librarian-text" class="sl-text"></p>
+    </div>
+
+    <p id="shelf-drawer-desc" class="subheading" style="padding:4px 20px 10px;font-style:italic;font-size:0.8rem;color:rgba(232,220,196,0.7);"></p>
+    
+    <!-- Books Grid in Drawer -->
+    <div id="shelf-books-grid" class="drawer-books-grid"></div>
+    
+    <div class="drawer-footer">Click any folio to receive Master Keith's illumination</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SCREEN 3: READING ROOM (4_inside_room.png)
+       ═══════════════════════════════════════════════════════ -->
+  <div id="reading-screen" class="screen">
+    <img class="bg-fullbleed" src="{{ url_for('static', filename='assets/4_inside_room.png') }}" alt="Reading Room">
+    <div class="bg-overlay"></div>
+
+    <div class="header">
+      <button class="btn-ghost" onclick="showScreen('library-screen')">← RETURN TO MAIN LIBRARY</button>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-ghost" onclick="openSavedFolios()">🔖 <span>SAVED FOLIOS</span></button>
+        <button class="btn-ghost" onclick="openSearch()">🔍</button>
+      </div>
+    </div>
+
+    <!-- Invisible Desk Hotspot (Step 1 -> Step 2) -->
+    <div class="hotspot" style="left:20%;top:48%;width:50%;height:46%;" onclick="showScreen('tabletop-screen')">
+      <div class="genre-tooltip"><h4>Study Desk</h4><p style="font-size:0.65rem;color:#e8dcc4;">Click to examine currently reading folio</p></div>
+    </div>
+
+    <!-- Invisible Book Pile / Shelf Rack Hotspot (right side of room) -->
+    <div class="hotspot" style="right:2%;top:10%;width:26%;height:82%;" onclick="openSavedFolios()">
+      <div class="genre-tooltip"><h4>Manuscript Stacks</h4><p style="font-size:0.65rem;color:#e8dcc4;">Click to view Bookmarked & Finished Folios</p></div>
+    </div>
+
+    <div class="footer">Click the desk to approach table • Click shelf stack for saved folios</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SCREEN 4: TABLE CLOSE-UP (5_room_inside_table_top.png)
+       ═══════════════════════════════════════════════════════ -->
+  <div id="tabletop-screen" class="screen">
+    <img class="bg-fullbleed" src="{{ url_for('static', filename='assets/5_room_inside_table_top.png') }}" alt="Desk Close-up">
+    <div class="bg-overlay"></div>
+
+    <div class="header">
+      <button class="btn-ghost" onclick="showScreen('reading-screen')">← BACK TO READING ROOM</button>
+      <button class="btn-ghost" onclick="openSavedFolios()">🔖 <span>SAVED FOLIOS</span></button>
+    </div>
+
+    <!-- Table preview banner for currently reading book -->
+    <div id="tabletop-active-indicator" class="tabletop-preview-pill">
+      <span style="color:#d4a24c;">📖 CURRENT FOLIO ON TABLE:</span>
+      <span id="tabletop-book-name" style="font-style:italic;">None</span>
+      <span style="font-size:0.7rem;color:rgba(232,220,196,0.6);">(Click open book below to read)</span>
+    </div>
+
+    <!-- Invisible click area over open book on desk (Step 2 -> Step 3) -->
+    <div class="hotspot" style="left:18%;top:18%;width:64%;height:68%;" onclick="openActiveBookModal()">
+      <div class="genre-tooltip"><h4>Open Folio</h4><p style="font-size:0.65rem;color:#e8dcc4;">Click to open full manuscript record</p></div>
+    </div>
+
+    <div class="footer">Click the open book on the table to view tome details and Master Keith's thoughts</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       BOOK DETAIL DRAWER (Docks on Right Half: Leaves Librarian in Full View!)
+       ═══════════════════════════════════════════════════════ -->
+  <div id="book-drawer" class="book-drawer">
+    <div class="drawer-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="btn-ghost" style="padding:4px 12px;font-size:0.75rem;" onclick="closeBookDrawer()">← BACK</button>
+        <div>
+          <div class="label">✦ MANUSCRIPT RECORD</div>
+          <span id="drawer-book-genre" style="font-size:0.7rem;color:#ffcc70;text-transform:uppercase;letter-spacing:0.1em;"></span>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeBookDrawer()">✕</button>
+    </div>
+
+    <!-- Personalized Action Alert (when adding to desk or bookmarking) -->
+    <div id="book-action-toast" class="book-action-toast" style="display:none;">
+      <span class="bat-icon">🕯️</span>
+      <div>
+        <div class="bat-speaker">MASTER KEITH</div>
+        <p id="book-action-toast-text" class="bat-text"></p>
+      </div>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Cover Section with Gothic Fallback -->
+      <div class="cover-column">
+        <div id="modal-cover-custom" class="custom-book-cover">
+          <div class="cbc-border">
+            <div class="cbc-star">✦</div>
+            <div id="cbc-title" class="cbc-title"></div>
+            <div class="cbc-divider"></div>
+            <div id="cbc-author" class="cbc-author"></div>
+            <div id="cbc-genre" class="cbc-genre"></div>
+          </div>
+        </div>
+        <img id="modal-cover" class="book-cover" src="" alt="Book Cover" style="display:none;">
+        <div id="modal-status" class="status-badge unread">Status: unread</div>
+      </div>
+
+      <!-- Book Information -->
+      <div class="info-column">
+        <h2 id="modal-title" class="gothic" style="font-size:1.35rem;color:#f0e6d2;line-height:1.3;"></h2>
+        <p id="modal-author" class="subheading" style="font-size:0.95rem;color:#d4a24c;font-style:italic;margin:4px 0 10px;"></p>
+
+        <!-- MASTER KEITH'S CLEAR, FRIENDLY COMMENT BOX -->
+        <div class="librarian-book-quote-box">
+          <div class="lb-header">
+            <span class="feather-icon">🪶</span>
+            <span class="lb-title">MASTER KEITH'S RECOMMENDATION</span>
+          </div>
+          <p id="modal-librarian-comment" class="lb-quote"></p>
+        </div>
+
+        <p id="modal-desc" style="font-size:0.84rem;color:#e8dcc4;line-height:1.55;margin-top:8px;"></p>
+        
+        <div class="meta-grid">
+          <div><span class="label">Genre:</span> <span id="modal-genre"></span></div>
+          <div><span class="label">Pages:</span> <span id="modal-pages"></span></div>
+          <div><span class="label">Publisher:</span> <span id="modal-publisher"></span></div>
+          <div><span class="label">Rating:</span> <span id="modal-rating"></span></div>
+        </div>
+
+        <div id="modal-actions" class="actions-row"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SEARCH OVERLAY
+       ═══════════════════════════════════════════════════════ -->
+  <div id="search-overlay" class="modal-backdrop" onclick="if(event.target===this)closeSearch()">
+    <div class="modal-panel" style="max-width:800px;margin-top:40px;display:flex;flex-direction:column;">
+      <div class="modal-header">
+        <div style="display:flex;align-items:center;gap:10px;flex:1;">
+          <span style="font-size:1.2rem;">🔍</span>
+          <input id="search-input" type="text" class="search-input" placeholder="Search 540 books by title, author, keyword, or genre (e.g. Ikigai, Python, Kalam)..." oninput="handleSearch()">
+        </div>
+        <button class="modal-close" onclick="closeSearch()">✕</button>
+      </div>
+      <div id="search-results" style="padding:20px;overflow-y:auto;flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;max-height:60vh;"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SAVED FOLIOS OVERLAY (Bookmarks + Finished)
+       ═══════════════════════════════════════════════════════ -->
+  <div id="saved-folios-overlay" class="modal-backdrop" onclick="if(event.target===this)closeSavedFolios()">
+    <div class="modal-panel" style="max-width:840px;display:flex;flex-direction:column;">
+      <div class="modal-header">
+        <div class="label">✦ SAVED & BOOKMARKED ARCHIVES</div>
+        <button class="modal-close" onclick="closeSavedFolios()">✕</button>
+      </div>
+      <div style="padding:20px;overflow-y:auto;flex:1;max-height:70vh;">
+        <!-- Bookmarked -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.1);">
+          <span style="color:#ffb347;">🔖</span>
+          <h3 class="gothic" style="font-size:0.8rem;color:#ffcc70;text-transform:uppercase;letter-spacing:0.1em;">Bookmarked Manuscripts <span id="saved-bm-count"></span></h3>
+        </div>
+        <div id="saved-bookmarked-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:24px;"></div>
+
+        <!-- Finished -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.1);">
+          <span style="color:#d4a24c;">✓</span>
+          <h3 class="gothic" style="font-size:0.8rem;color:#d4a24c;text-transform:uppercase;letter-spacing:0.1em;">Finished Folios Archive <span id="saved-fin-count"></span></h3>
+        </div>
+        <div id="saved-finished-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
