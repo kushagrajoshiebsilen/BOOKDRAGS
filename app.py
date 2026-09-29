@@ -194,5 +194,6 @@ if __name__ == "__main__":
     cache = load_books_cache()
     total = sum(len(v) for v in cache.values())
     print(f"Loaded {total} books across {len(cache)} shelves into memory.")
-    print("Server ready! Open http://127.0.0.1:3000")
-    app.run(debug=True, port=3000)
+    port = int(os.environ.get("PORT", 3000))
+    print(f"Server ready! Open http://127.0.0.1:{port}")
+    app.run(debug=True, host="0.0.0.0", port=port)
