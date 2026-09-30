@@ -50,16 +50,41 @@
       </div>
     </div>
 
-    <!-- ─── MASTER KEITH (LIBRARIAN POD & SPEECH BUBBLE) ─── -->
-    <!-- Positioned directly over/next to the Librarian at the lower-left desk -->
+    <!-- ─── MASTER KEITH (HEAD LIBRARIAN CHAT & DIALOGUE POD) ─── -->
     <div id="librarian-bubble" class="librarian-pod">
       <div class="librarian-header">
-        <span class="candle-glow">🕯️</span>
-        <span class="librarian-name">ARCHIVIST KEITH</span>
-        <span class="librarian-hint" onclick="fetchNewLibrarianGreeting()" style="cursor:pointer;" title="Click for advice">(Click for advice)</span>
-        <button class="librarian-close-btn" onclick="event.stopPropagation(); closeLibrarianBubble();" title="Close dialogue">✕</button>
+        <div class="lh-left">
+          <span class="candle-glow">🕯️</span>
+          <span class="librarian-name">MASTER KEITH • HEAD LIBRARIAN</span>
+        </div>
+        <div class="lh-right">
+          <span class="librarian-hint" onclick="fetchNewLibrarianGreeting()" style="cursor:pointer;" title="New Greeting">↻</span>
+          <button class="librarian-close-btn" onclick="event.stopPropagation(); closeLibrarianBubble();" title="Close dialogue">✕</button>
+        </div>
       </div>
-      <p id="librarian-text" class="librarian-quote" onclick="fetchNewLibrarianGreeting()" title="Click to hear more advice"></p>
+
+      <!-- Scrollable Message History -->
+      <div id="chat-history" class="chat-history-container">
+        <div id="librarian-text-wrapper">
+          <p id="librarian-text" class="librarian-quote" onclick="fetchNewLibrarianGreeting()" title="Click to hear advice"></p>
+        </div>
+      </div>
+
+      <!-- Gothic Chat Form -->
+      <div class="gothic-chat-form" onclick="event.stopPropagation();">
+        <input 
+          id="chat-input" 
+          type="text" 
+          class="gothic-chat-input" 
+          placeholder="Ask Master Keith (e.g. 'I want Atomic Habits', 'scary stories')..." 
+          onkeydown="if(event.key==='Enter'){ event.preventDefault(); sendChatMessage(); }"
+          autocomplete="off"
+        />
+        <button id="chat-send-btn" class="gothic-chat-btn" onclick="sendChatMessage()" title="Send Inquiry">
+          <span id="chat-btn-text">INQUIRE</span>
+          <span id="chat-spinner" class="chat-spinner" style="display:none;">🕯️</span>
+        </button>
+      </div>
     </div>
 
     <!-- Librarian Desk Click Hotspot -->
@@ -69,79 +94,83 @@
 
     <!-- ─── 21 SHELF HOTSPOTS (Mapped across 3 Tiers & 5 Columns) ─── -->
     <!-- COLUMN 1 (Far Left) -->
-    <div class="hotspot" style="left:5%;top:8%;width:15%;height:18%;" onclick="openGenreDrawer('self-help')">
+    <div class="hotspot" data-genre-id="self-help" style="left:5%;top:8%;width:15%;height:18%;" onclick="openGenreDrawer('self-help')">
       <div class="genre-tooltip"><h4>Self-Help & Habits</h4><p style="font-size:0.65rem;color:#ffcc70;">Ikigai, Atomic Habits, Subconscious Mind</p></div>
     </div>
-    <div class="hotspot" style="left:5%;top:28%;width:15%;height:18%;" onclick="openGenreDrawer('self-development')">
+    <div class="hotspot" data-genre-id="self-development" style="left:5%;top:28%;width:15%;height:18%;" onclick="openGenreDrawer('self-development')">
       <div class="genre-tooltip"><h4>Self-Development & Mastery</h4><p style="font-size:0.65rem;color:#ffcc70;">Can't Hurt Me, 12 Rules for Life, 48 Laws</p></div>
     </div>
-    <div class="hotspot" style="left:5%;top:48%;width:15%;height:18%;" onclick="openGenreDrawer('business-finance')">
+    <div class="hotspot" data-genre-id="business-finance" style="left:5%;top:48%;width:15%;height:18%;" onclick="openGenreDrawer('business-finance')">
       <div class="genre-tooltip"><h4>Money & Business</h4><p style="font-size:0.65rem;color:#ffcc70;">Rich Dad Poor Dad, Psychology of Money</p></div>
     </div>
-    <div class="hotspot" style="left:2%;top:68%;width:8%;height:26%;" onclick="openGenreDrawer('indian-literature')">
+    <div class="hotspot" data-genre-id="indian-literature" style="left:2%;top:68%;width:8%;height:26%;" onclick="openGenreDrawer('indian-literature')">
       <div class="genre-tooltip"><h4>Indian Masterpieces</h4><p style="font-size:0.65rem;color:#ffcc70;">Malgudi Days, Train to Pakistan, The Guide</p></div>
     </div>
 
     <!-- COLUMN 2 (Left-Center) -->
-    <div class="hotspot" style="left:22%;top:8%;width:16%;height:24%;" onclick="openGenreDrawer('ancient-wisdom')">
+    <div class="hotspot" data-genre-id="hindu-scriptures" style="left:22%;top:8%;width:16%;height:24%;" onclick="openGenreDrawer('hindu-scriptures')">
+      <div class="genre-tooltip"><h4>Hindu Scriptures & Sacred Epics</h4><p style="font-size:0.65rem;color:#ffcc70;">Rigveda, Yajurveda, Bhagavad Gita, Upanishads</p></div>
+    </div>
+    <div class="hotspot" data-genre-id="ancient-wisdom" style="left:22%;top:34%;width:16%;height:14%;" onclick="openGenreDrawer('ancient-wisdom')">
       <div class="genre-tooltip"><h4>Vedic & Ancient Epics</h4><p style="font-size:0.65rem;color:#ffcc70;">Bhagavad Gita, Mahabharata, Chanakya Neeti</p></div>
     </div>
-    <div class="hotspot" style="left:22%;top:34%;width:16%;height:24%;" onclick="openGenreDrawer('psychology')">
+    <div class="hotspot" data-genre-id="psychology" style="left:22%;top:50%;width:16%;height:14%;" onclick="openGenreDrawer('psychology')">
       <div class="genre-tooltip"><h4>Mind, Behavior & Soul</h4><p style="font-size:0.65rem;color:#ffcc70;">Thinking Fast & Slow, Man's Search For Meaning</p></div>
     </div>
-    <div class="hotspot" style="left:31%;top:60%;width:12%;height:30%;" onclick="openGenreDrawer('philosophy')">
+    <div class="hotspot" data-genre-id="philosophy" style="left:31%;top:60%;width:12%;height:30%;" onclick="openGenreDrawer('philosophy')">
       <div class="genre-tooltip"><h4>Stoicism & Philosophy</h4><p style="font-size:0.65rem;color:#ffcc70;">Meditations, Letters from a Stoic, Plato</p></div>
     </div>
 
     <!-- COLUMN 3 (Grand Center Vault) -->
-    <div class="hotspot" style="left:40%;top:6%;width:20%;height:24%;" onclick="openGenreDrawer('history-chronicles')">
+    <div class="hotspot" data-genre-id="history-chronicles" style="left:40%;top:6%;width:20%;height:24%;" onclick="openGenreDrawer('history-chronicles')">
       <div class="genre-tooltip"><h4>Chronicles of Empires</h4><p style="font-size:0.65rem;color:#ffcc70;">Discovery of India, India After Gandhi, Silk Roads</p></div>
     </div>
-    <div class="hotspot" style="left:40%;top:32%;width:20%;height:26%;" onclick="openGenreDrawer('science')">
+    <div class="hotspot" data-genre-id="science" style="left:40%;top:32%;width:20%;height:26%;" onclick="openGenreDrawer('science')">
       <div class="genre-tooltip"><h4>Cosmos & Scientific Wonder</h4><p style="font-size:0.65rem;color:#ffcc70;">Cosmos, Brief History of Time, Sapiens</p></div>
     </div>
-    <div class="hotspot" style="left:44%;top:60%;width:16%;height:32%;" onclick="openGenreDrawer('technology')">
+    <div class="hotspot" data-genre-id="technology" style="left:44%;top:60%;width:16%;height:32%;" onclick="openGenreDrawer('technology')">
       <div class="genre-tooltip"><h4>Code, Algorithms & Python</h4><p style="font-size:0.65rem;color:#ffcc70;">Fluent Python, Automate the Boring Stuff, Clean Code</p></div>
     </div>
 
     <!-- COLUMN 4 (Right-Center) -->
-    <div class="hotspot" style="left:62%;top:8%;width:16%;height:24%;" onclick="openGenreDrawer('crime-thriller')">
+    <div class="hotspot" data-genre-id="crime-thriller" style="left:62%;top:8%;width:16%;height:24%;" onclick="openGenreDrawer('crime-thriller')">
       <div class="genre-tooltip"><h4>Enigmas & Detective Sleuths</h4><p style="font-size:0.65rem;color:#ffcc70;">Sherlock Holmes, Feluda, Byomkesh Bakshi</p></div>
     </div>
-    <div class="hotspot" style="left:62%;top:34%;width:16%;height:24%;" onclick="openGenreDrawer('horror-gothic')">
+    <div class="hotspot" data-genre-id="horror-gothic" style="left:62%;top:34%;width:16%;height:24%;" onclick="openGenreDrawer('horror-gothic')">
       <div class="genre-tooltip"><h4>Gothic Dread & Cosmic Fear</h4><p style="font-size:0.65rem;color:#ffcc70;">Frankenstein, Dracula, The Shining</p></div>
     </div>
-    <div class="hotspot" style="left:62%;top:60%;width:14%;height:32%;" onclick="openGenreDrawer('mythology')">
+    <div class="hotspot" data-genre-id="mythology" style="left:62%;top:60%;width:14%;height:32%;" onclick="openGenreDrawer('mythology')">
       <div class="genre-tooltip"><h4>Mythic Sagas & Ancient Gods</h4><p style="font-size:0.65rem;color:#ffcc70;">Shiva Trilogy, Palace of Illusions, Song of Achilles</p></div>
     </div>
 
     <!-- COLUMN 5 (Far Right) -->
-    <div class="hotspot" style="left:80%;top:8%;width:16%;height:22%;" onclick="openGenreDrawer('fantasy')">
+    <div class="hotspot" data-genre-id="fantasy" style="left:80%;top:8%;width:16%;height:22%;" onclick="openGenreDrawer('fantasy')">
       <div class="genre-tooltip"><h4>High Fantasy & Magic</h4><p style="font-size:0.65rem;color:#ffcc70;">Lord of the Rings, Game of Thrones, Mistborn</p></div>
     </div>
-    <div class="hotspot" style="left:80%;top:32%;width:16%;height:24%;" onclick="openGenreDrawer('dystopian')">
+    <div class="hotspot" data-genre-id="dystopian" style="left:80%;top:32%;width:16%;height:24%;" onclick="openGenreDrawer('dystopian')">
       <div class="genre-tooltip"><h4>Dystopian Visions</h4><p style="font-size:0.65rem;color:#ffcc70;">1984, Brave New World, Fahrenheit 451</p></div>
     </div>
-    <div class="hotspot" style="left:78%;top:58%;width:10%;height:34%;" onclick="openGenreDrawer('biography')">
+    <div class="hotspot" data-genre-id="biography" style="left:78%;top:58%;width:10%;height:34%;" onclick="openGenreDrawer('biography')">
       <div class="genre-tooltip"><h4>Lives of Immortals</h4><p style="font-size:0.65rem;color:#ffcc70;">Wings of Fire, Autobiography of a Yogi, Steve Jobs</p></div>
     </div>
 
     <!-- ADDITIONAL SHELVES & CORNERS -->
-    <div class="hotspot" style="left:2%;top:8%;width:6%;height:50%;" onclick="openGenreDrawer('classics')">
+    <div class="hotspot" data-genre-id="classics" style="left:2%;top:8%;width:6%;height:50%;" onclick="openGenreDrawer('classics')">
       <div class="genre-tooltip"><h4>World Classics</h4><p style="font-size:0.65rem;color:#ffcc70;">Crime & Punishment, War & Peace</p></div>
     </div>
-    <div class="hotspot" style="left:94%;top:8%;width:5%;height:50%;" onclick="openGenreDrawer('health-wellness')">
+    <div class="hotspot" data-genre-id="health-wellness" style="left:94%;top:8%;width:5%;height:50%;" onclick="openGenreDrawer('health-wellness')">
       <div class="genre-tooltip"><h4>Vitality & Longevity</h4><p style="font-size:0.65rem;color:#ffcc70;">Why We Sleep, Breath, Wim Hof Method</p></div>
     </div>
-    <div class="hotspot" style="left:89%;top:60%;width:10%;height:32%;" onclick="openGenreDrawer('romance-drama')">
+    <div class="hotspot" data-genre-id="romance-drama" style="left:89%;top:60%;width:10%;height:32%;" onclick="openGenreDrawer('romance-drama')">
       <div class="genre-tooltip"><h4>Tragic Romance</h4><p style="font-size:0.65rem;color:#ffcc70;">Pride & Prejudice, Normal People</p></div>
     </div>
-    <div class="hotspot" style="left:20%;top:60%;width:10%;height:32%;" onclick="openGenreDrawer('poetry-ghazals')">
+    <div class="hotspot" data-genre-id="poetry-ghazals" style="left:20%;top:60%;width:10%;height:32%;" onclick="openGenreDrawer('poetry-ghazals')">
       <div class="genre-tooltip"><h4>Poetry & Ghazals</h4><p style="font-size:0.65rem;color:#ffcc70;">Gitanjali, Diwan-e-Ghalib, Madhushala</p></div>
     </div>
-    <div class="hotspot" style="left:88%;top:38%;width:8%;height:20%;" onclick="openGenreDrawer('young-adult')">
+    <div class="hotspot" data-genre-id="young-adult" style="left:88%;top:38%;width:8%;height:20%;" onclick="openGenreDrawer('young-adult')">
       <div class="genre-tooltip"><h4>Coming of Age & Quests</h4><p style="font-size:0.65rem;color:#ffcc70;">Percy Jackson, Harry Potter, Ruskin Bond</p></div>
     </div>
+
 
     <!-- Quick Shelf Browser Dropdown / Modal Bar -->
     <div id="shelf-browser-bar" class="shelf-browser-bar">
@@ -346,6 +375,13 @@
         <div id="saved-finished-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;"></div>
       </div>
     </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       LIBRARIAN MOVEMENT VIDEO OVERLAY
+       ═══════════════════════════════════════════════════════ -->
+  <div id="movement-video-overlay" class="movement-video-overlay" style="display:none;">
+    <video id="movement-video" class="movement-video" preload="auto" playsinline muted></video>
   </div>
 
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>

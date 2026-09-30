@@ -891,3 +891,162 @@ body {
   80% { opacity: 0.5; }
   100% { transform: translateY(-140px) translateX(30px) rotate(180deg); opacity: 0; }
 }
+
+/* ─── Golden Glowing Shelf Hotspots (Bookmark Highlight) ────────────── */
+.hotspot.shelf-glowing {
+  border: 1.5px solid var(--gold-bright) !important;
+  box-shadow: 0 0 18px rgba(255, 204, 112, 0.6), inset 0 0 15px rgba(212, 162, 76, 0.3) !important;
+  background: rgba(212, 162, 76, 0.12) !important;
+  animation: shelfGlowPulse 2.8s infinite ease-in-out !important;
+  border-radius: 6px;
+}
+
+@keyframes shelfGlowPulse {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(255, 204, 112, 0.4), inset 0 0 10px rgba(212, 162, 76, 0.2);
+    border-color: rgba(255, 204, 112, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(255, 204, 112, 0.85), inset 0 0 20px rgba(212, 162, 76, 0.45);
+    border-color: rgba(255, 204, 112, 1);
+  }
+}
+
+/* ─── Librarian Chat Pod Upgrade ────────────────────────────────────── */
+.librarian-pod {
+  position: absolute;
+  bottom: 14%;
+  left: 5%;
+  width: 380px;
+  max-width: 90vw;
+  background: rgba(14, 10, 8, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 162, 76, 0.4);
+  border-radius: 12px;
+  padding: 14px;
+  z-index: 25;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 20px rgba(212, 162, 76, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.librarian-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(212, 162, 76, 0.2);
+  padding-bottom: 8px;
+}
+.lh-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.lh-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat-history-container {
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.chat-msg {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+.chat-msg-user {
+  align-self: flex-end;
+  background: rgba(61, 40, 23, 0.7);
+  border: 1px solid rgba(212, 162, 76, 0.3);
+  color: #ffcc70;
+  border-top-right-radius: 2px;
+}
+.chat-msg-librarian {
+  align-self: flex-start;
+  background: rgba(20, 14, 10, 0.8);
+  border: 1px solid rgba(212, 162, 76, 0.25);
+  color: #e8dcc4;
+  border-top-left-radius: 2px;
+  font-style: italic;
+}
+
+.gothic-chat-form {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 4px;
+}
+.gothic-chat-input {
+  flex: 1;
+  background: rgba(8, 5, 3, 0.8);
+  border: 1px solid rgba(212, 162, 76, 0.35);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #f5ede0;
+  font-family: 'EB Garamond', serif;
+  font-size: 0.88rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+.gothic-chat-input:focus {
+  border-color: #ffcc70;
+  box-shadow: 0 0 10px rgba(255, 204, 112, 0.3);
+}
+
+.gothic-chat-btn {
+  background: rgba(45, 30, 18, 0.9);
+  border: 1px solid #d4a24c;
+  color: #ffcc70;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.gothic-chat-btn:hover {
+  background: rgba(75, 48, 28, 0.95);
+  border-color: #ffcc70;
+  box-shadow: 0 0 12px rgba(255, 204, 112, 0.4);
+}
+
+.chat-spinner {
+  display: inline-block;
+  animation: candleSpin 1.2s infinite ease-in-out;
+}
+@keyframes candleSpin {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ─── Movement Video Overlay ────────────────────────────────────────── */
+.movement-video-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background: #000;
+  opacity: 1;
+  transition: opacity 0.4s ease-out;
+  pointer-events: auto;
+}
+.movement-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}

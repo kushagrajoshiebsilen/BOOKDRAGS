@@ -5,6 +5,15 @@ Provides friendly, easy-to-understand Librarian advice and personalized response
 
 GENRES_CONFIG = [
     {
+        "id": "hindu-scriptures",
+        "name": "Hindu Scriptures & Sacred Epics",
+        "category": "Sacred Epics & Scriptures",
+        "shelfTier": "upper",
+        "shelfColumn": 2,
+        "description": "Sanatana Dharma's sacred library containing all 4 Vedas, Bhagavad Gita, Upanishads, Valmiki Ramayana, Vyasa Mahabharata, and Puranas.",
+        "librarianGreeting": "Namaste seeker. Welcome to the Sacred Hindu Scriptures collection! Here rest the 4 eternal Vedas, the Srimad Bhagavad Gita, Upanishads, Valmiki Ramayana, Vyasa Mahabharata, and the Holy Puranas."
+},
+    {
         "id": "self-help",
         "name": "Self-Help & Habits",
         "category": "Personal Growth",

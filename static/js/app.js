@@ -295,8 +295,176 @@ function updateCardBookmarkDisplay(bookId, isBookmarked) {
       if (badge) badge.remove();
     }
   }
-  // also refresh shelf pills badge count
+  // refresh shelf pills badge count & glowing shelf hotspots
   renderShelfPills(GENRES_DATA);
+  updateShelfGlows();
+}
+
+function updateShelfGlows() {
+  const bmIds = getBookmarkedIds();
+  const bookmarkedGenres = new Set();
+  
+  allBooksCache.forEach(b => {
+    if (bmIds.includes(b.id)) {
+      bookmarkedGenres.add(b.genre);
+    }
+  });
+
+  document.querySelectorAll(".hotspot[data-genre-id]").forEach(el => {
+    const genreId = el.getAttribute("data-genre-id");
+    if (bookmarkedGenres.has(genreId)) {
+      el.classList.add("shelf-glowing");
+    } else {
+      el.classList.remove("shelf-glowing");
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// AI CHAT & LIBRARIAN MOVEMENT CONTROLLER
+// ═══════════════════════════════════════════════════════════
+let isLibrarianMoving = false;
+
+function playLibrarianMovement(shelfTier, onComplete) {
+  if (isLibrarianMoving) return;
+  isLibrarianMoving = true;
+
+  const overlay = document.getElementById("movement-video-overlay");
+  const video = document.getElementById("movement-video");
+  if (!overlay || !video) {
+    isLibrarianMoving = false;
+    if (onComplete) onComplete();
+    return;
+  }
+
+  // Use movement video (going_on_upper_shelf.mp4)
+  const videoSrc = "/static/assets/going_on_upper_shelf.mp4";
+
+  video.onended = null;
+  video.onerror = null;
+
+  overlay.style.display = "block";
+  overlay.style.opacity = "1";
+  video.src = videoSrc;
+  video.currentTime = 0;
+
+  const handleEnded = () => {
+    video.pause();
+    // 1. Hold final frame for ~300ms
+    setTimeout(() => {
+      // 2. Cross-fade duration ~400ms
+      overlay.style.opacity = "0";
+      setTimeout(() => {
+        overlay.style.display = "none";
+        isLibrarianMoving = false;
+        if (onComplete) onComplete();
+      }, 400);
+    }, 300);
+  };
+
+  video.onended = handleEnded;
+  video.onerror = (e) => {
+    console.warn("Video playback error:", e);
+    overlay.style.display = "none";
+    isLibrarianMoving = false;
+    if (onComplete) onComplete();
+  };
+
+  video.play().catch(e => {
+    console.warn("Play error:", e);
+    overlay.style.display = "none";
+    isLibrarianMoving = false;
+    if (onComplete) onComplete();
+  });
+}
+
+let isChatSending = false;
+
+async function sendChatMessage() {
+  if (isChatSending) return;
+
+  const inputEl = document.getElementById("chat-input");
+  const sendBtn = document.getElementById("chat-send-btn");
+  const btnText = document.getElementById("chat-btn-text");
+  const spinner = document.getElementById("chat-spinner");
+  const historyContainer = document.getElementById("chat-history");
+
+  if (!inputEl) return;
+  const message = inputEl.value.trim();
+  if (!message) return;
+
+  isChatSending = true;
+  inputEl.disabled = true;
+  if (sendBtn) sendBtn.disabled = true;
+  if (btnText) btnText.style.display = "none";
+  if (spinner) spinner.style.display = "inline-block";
+
+  // Append user message bubble
+  const userBubble = document.createElement("div");
+  userBubble.className = "chat-msg chat-msg-user";
+  userBubble.textContent = message;
+  historyContainer.appendChild(userBubble);
+  historyContainer.scrollTop = historyContainer.scrollHeight;
+
+  inputEl.value = "";
+
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: message })
+    });
+
+    const data = await res.json();
+
+    // Append librarian response bubble
+    const libBubble = document.createElement("div");
+    libBubble.className = "chat-msg chat-msg-librarian";
+    libBubble.textContent = `"${data.reply || 'Speak your mind, traveler.'}"`;
+    historyContainer.appendChild(libBubble);
+    historyContainer.scrollTop = historyContainer.scrollHeight;
+
+    // Update Head Librarian speech bubble
+    setLibrarianText(data.reply);
+
+    // If request matches a shelf, book, or saved collection
+    if (data.status === "matched") {
+      if (data.intent === "saved_books") {
+        setTimeout(() => {
+          openSavedFolios();
+        }, 1800);
+      } else if (data.genreId || data.shelfId) {
+        const targetGenreId = data.genreId || data.shelfId;
+        const targetBookId = data.bookId;
+        const shelfTier = data.shelfTier || "mid";
+
+        // Give 2 seconds for the user to read Master Keith's response in chat before moving
+        setTimeout(() => {
+          playLibrarianMovement(shelfTier, async () => {
+            await openGenreDrawer(targetGenreId);
+            if (targetBookId) {
+              openBookModal(targetBookId);
+            }
+          });
+        }, 2000);
+      }
+    }
+
+  } catch (err) {
+    console.error("Chat API error:", err);
+    const errBubble = document.createElement("div");
+    errBubble.className = "chat-msg chat-msg-librarian";
+    errBubble.textContent = '"The shelves are unusually quiet tonight. Please try again."';
+    historyContainer.appendChild(errBubble);
+    historyContainer.scrollTop = historyContainer.scrollHeight;
+  } finally {
+    isChatSending = false;
+    inputEl.disabled = false;
+    if (sendBtn) sendBtn.disabled = false;
+    if (btnText) btnText.style.display = "inline";
+    if (spinner) spinner.style.display = "none";
+    inputEl.focus();
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -320,6 +488,74 @@ async function openGenreDrawer(genreId) {
   document.getElementById("shelf-librarian-text").textContent = shelfGreeting;
 
   const grid = document.getElementById("shelf-books-grid");
+function createGothicCoverDataUrl(title, author, genre = "ARCHIVES") {
+  const iconMap = {
+    "hindu-scriptures": "🕉️",
+    "self-help": "✨",
+    "self-development": "⚔️",
+    "business-finance": "⚖️",
+    "indian-literature": "🪔",
+    "ancient-wisdom": "📜",
+    "psychology": "🧠",
+    "philosophy": "🦉",
+    "history-chronicles": "🏛️",
+    "science": "🌌",
+    "technology": "💻",
+    "crime-thriller": "🔍",
+    "horror-gothic": "🕯️",
+    "mythology": "🏛️",
+    "fantasy": "🔮",
+    "dystopian": "👁️",
+    "biography": "🖋️",
+    "classics": "📜",
+    "health-wellness": "🌿",
+    "romance-drama": "🌹",
+    "poetry-ghazals": "🥀",
+    "young-adult": "⚡"
+  };
+
+  const emblem = iconMap[genre] || "✦";
+  const cleanTitle = (title || "Folio").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const cleanAuthor = (author || "Anonymous").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const cleanGenre = (genre || "Archives").replace("-", " ").toUpperCase();
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 450" width="100%" height="100%">
+    <defs>
+      <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2a1810"/>
+        <stop offset="50%" stop-color="#170d08"/>
+        <stop offset="100%" stop-color="#0d0704"/>
+      </linearGradient>
+      <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#d4a24c"/>
+        <stop offset="50%" stop-color="#ffcc70"/>
+        <stop offset="100%" stop-color="#b8860b"/>
+      </linearGradient>
+    </defs>
+    <rect width="300" height="450" rx="8" fill="url(#bg)" stroke="#d4a24c" stroke-width="3"/>
+    <rect x="12" y="12" width="276" height="426" rx="4" fill="none" stroke="url(#gold)" stroke-width="1.5" stroke-dasharray="4 2"/>
+    <rect x="18" y="18" width="264" height="414" fill="rgba(0,0,0,0.3)" stroke="rgba(212,162,76,0.3)" stroke-width="1"/>
+    
+    <text x="150" y="70" text-anchor="middle" font-size="28">${emblem}</text>
+    <text x="150" y="100" text-anchor="middle" fill="#ffcc70" font-family="serif" font-size="10" letter-spacing="3">✦ ARCHIVE FOLIO ✦</text>
+
+    <line x1="60" y1="120" x2="240" y2="120" stroke="url(#gold)" stroke-width="1"/>
+
+    <text x="150" y="180" text-anchor="middle" fill="#f5ede0" font-family="Georgia, serif" font-weight="bold" font-size="16">
+      <tspan x="150" dy="0">${cleanTitle.slice(0, 22)}</tspan>
+      ${cleanTitle.length > 22 ? `<tspan x="150" dy="22">${cleanTitle.slice(22, 44)}</tspan>` : ''}
+    </text>
+
+    <line x1="100" y1="260" x2="200" y2="260" stroke="#d4a24c" stroke-width="1"/>
+
+    <text x="150" y="300" text-anchor="middle" fill="#d4a24c" font-family="Georgia, serif" font-style="italic" font-size="13">by ${cleanAuthor.slice(0, 24)}</text>
+
+    <text x="150" y="400" text-anchor="middle" fill="rgba(232,220,196,0.6)" font-family="sans-serif" font-size="9" letter-spacing="2">${cleanGenre}</text>
+  </svg>`;
+
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+
   grid.innerHTML = "";
 
   books.forEach(book => {
@@ -330,9 +566,10 @@ async function openGenreDrawer(genreId) {
     card.id = `shelf-card-${book.id}`;
     card.className = `book-card${isBookmarked ? " bookmarked" : ""}`;
     card.onclick = () => openBookModal(book.id);
+    const fallbackSvg = createGothicCoverDataUrl(book.title, book.author, book.genre);
     card.innerHTML = `
       ${isBookmarked ? '<span class="card-bookmark-badge">🔖 BOOKMARKED</span>' : ''}
-      <img src="${book.coverUrl}" alt="${book.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=120'">
+      <img src="${book.coverUrl || fallbackSvg}" alt="${book.title}" loading="lazy" onerror="this.onerror=null;this.src='${fallbackSvg}';">
       <div class="info">
         <h4>${book.title}</h4>
         <p class="author">${book.author}</p>
@@ -392,8 +629,10 @@ async function openBookModal(bookId) {
   document.getElementById("cbc-author").textContent = book?.author || "";
   document.getElementById("cbc-genre").textContent = (book?.genre || "ARCHIVES").replace("-", " ");
 
-  if (book && book.coverUrl && !book.coverUrl.includes("id=sh-") && !book.coverUrl.includes("id=bf-") && !book.coverUrl.includes("id=il-") && !book.coverUrl.includes("id=hg-")) {
+  if (book && book.coverUrl) {
     imgCover.src = book.coverUrl;
+    imgCover.style.display = "block";
+    customCover.style.display = "none";
     imgCover.onload = () => {
       imgCover.style.display = "block";
       customCover.style.display = "none";
@@ -403,7 +642,7 @@ async function openBookModal(bookId) {
       customCover.style.display = "flex";
     };
   } else {
-    // Show our authentic custom leather-bound gothic book cover!
+    // Show custom leather-bound gothic cover as fallback
     imgCover.style.display = "none";
     customCover.style.display = "flex";
   }
@@ -701,4 +940,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   initDoorScreen();
   await initLibraryScreen();
   await fetchAllBooks();
+  updateShelfGlows();
 });

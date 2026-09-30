@@ -51,6 +51,23 @@ export const useBookStore = create((set, get) => ({
   // Navigation Actions
   setScreen: (screen) => set({ activeScreen: screen }),
 
+  fetchCatalog: async () => {
+    try {
+      const gRes = await fetch('/api/genres');
+      if (gRes.ok) {
+        const fetchedGenres = await gRes.json();
+        set({ genres: fetchedGenres });
+      }
+      const bRes = await fetch('/api/books');
+      if (bRes.ok) {
+        const fetchedBooks = await bRes.json();
+        set({ books: fetchedBooks });
+      }
+    } catch (e) {
+      console.warn("Using default local data", e);
+    }
+  },
+
   enterLibrary: () => {
     set({ isDoorOpening: true });
     if (get().soundEnabled) playDoorOpenSound();
