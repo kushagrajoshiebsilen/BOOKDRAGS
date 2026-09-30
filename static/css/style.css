@@ -1039,9 +1039,9 @@ body {
   width: 100vw;
   height: 100vh;
   z-index: 9999;
-  background: #000;
-  opacity: 1;
-  transition: opacity 0.4s ease-out;
+  background: transparent;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
   pointer-events: auto;
 }
 .movement-video {

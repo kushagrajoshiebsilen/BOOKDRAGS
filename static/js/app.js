@@ -325,8 +325,11 @@ function updateShelfGlows() {
 // ═══════════════════════════════════════════════════════════
 let isLibrarianMoving = false;
 
-function playLibrarianMovement(shelfTier, onComplete) {
-  if (isLibrarianMoving) return;
+async function playLibrarianMovement(shelfTier = "mid", onComplete = null) {
+  if (isLibrarianMoving) {
+    if (onComplete) onComplete();
+    return;
+  }
   isLibrarianMoving = true;
 
   const overlay = document.getElementById("movement-video-overlay");
@@ -337,16 +340,25 @@ function playLibrarianMovement(shelfTier, onComplete) {
     return;
   }
 
-  // Use movement video (going_on_upper_shelf.mp4)
-  const videoSrc = "/static/assets/going_on_upper_shelf.mp4";
-
   video.onended = null;
   video.onerror = null;
 
-  overlay.style.display = "block";
-  overlay.style.opacity = "1";
-  video.src = videoSrc;
+  if (!video.src || !video.src.includes("going_on_upper_shelf.mp4")) {
+    video.src = "/static/assets/going_on_upper_shelf.mp4";
+  }
+
   video.currentTime = 0;
+
+  let hasFadedIn = false;
+  const showVideoOverlay = () => {
+    if (!hasFadedIn) {
+      hasFadedIn = true;
+      overlay.style.display = "block";
+      requestAnimationFrame(() => {
+        overlay.style.opacity = "1";
+      });
+    }
+  };
 
   const handleEnded = () => {
     video.pause();
@@ -370,12 +382,24 @@ function playLibrarianMovement(shelfTier, onComplete) {
     if (onComplete) onComplete();
   };
 
-  video.play().catch(e => {
+  // Wait until actual video frames are rendering to prevent any black screen flash
+  const onTimeUpdate = () => {
+    if (video.currentTime > 0.05) {
+      video.removeEventListener("timeupdate", onTimeUpdate);
+      showVideoOverlay();
+    }
+  };
+  video.addEventListener("timeupdate", onTimeUpdate);
+
+  try {
+    await video.play();
+  } catch (e) {
     console.warn("Play error:", e);
+    video.removeEventListener("timeupdate", onTimeUpdate);
     overlay.style.display = "none";
     isLibrarianMoving = false;
     if (onComplete) onComplete();
-  });
+  }
 }
 
 let isChatSending = false;

@@ -380,8 +380,8 @@
   <!-- ═══════════════════════════════════════════════════════
        LIBRARIAN MOVEMENT VIDEO OVERLAY
        ═══════════════════════════════════════════════════════ -->
-  <div id="movement-video-overlay" class="movement-video-overlay" style="display:none;">
-    <video id="movement-video" class="movement-video" preload="auto" playsinline muted></video>
+  <div id="movement-video-overlay" class="movement-video-overlay" style="display:none;opacity:0;">
+    <video id="movement-video" class="movement-video" src="{{ url_for('static', filename='assets/going_on_upper_shelf.mp4') }}" preload="auto" playsinline muted></video>
   </div>
 
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
