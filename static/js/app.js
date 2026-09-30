@@ -492,9 +492,70 @@ async function sendChatMessage() {
 }
 
 // ═══════════════════════════════════════════════════════════
+// HORIZONTAL WING SCROLLING & PANNING
+// ═══════════════════════════════════════════════════════════
+const EAST_WING_GENRES = [
+  "crime-thriller", "horror-gothic", "mythology", "fantasy",
+  "dystopian", "biography", "classics", "health-wellness",
+  "romance-drama", "poetry-ghazals", "young-adult"
+];
+
+function scrollToWing(wing) {
+  const container = document.getElementById("library-scroll-container");
+  if (!container) return;
+
+  if (wing === "east" || wing === 2 || (typeof wing === "string" && EAST_WING_GENRES.includes(wing))) {
+    container.scrollTo({ left: window.innerWidth, behavior: "smooth" });
+  } else {
+    container.scrollTo({ left: 0, behavior: "smooth" });
+  }
+}
+window.scrollToWing = scrollToWing;
+
+function initLibraryDragScroll() {
+  const container = document.getElementById("library-scroll-container");
+  if (!container) return;
+
+  let isDown = false;
+  let startX = 0;
+  let scrollLeft = 0;
+
+  container.addEventListener("mousedown", (e) => {
+    if (e.target.closest(".hotspot") || e.target.closest(".librarian-pod") || e.target.closest("button") || e.target.closest("input") || e.target.closest("#shelf-drawer")) return;
+    isDown = true;
+    container.style.cursor = "grabbing";
+    startX = e.pageX - container.offsetLeft;
+    scrollLeft = container.scrollLeft;
+  });
+
+  container.addEventListener("mouseleave", () => {
+    isDown = false;
+    container.style.cursor = "default";
+  });
+
+  container.addEventListener("mouseup", () => {
+    isDown = false;
+    container.style.cursor = "default";
+  });
+
+  container.addEventListener("mousemove", (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - container.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    container.scrollLeft = scrollLeft - walk;
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(initLibraryDragScroll, 500);
+});
+
+// ═══════════════════════════════════════════════════════════
 // SHELF CATALOGUE DRAWER (Right Docked: Leaves Librarian Visible!)
 // ═══════════════════════════════════════════════════════════
 async function openGenreDrawer(genreId) {
+  scrollToWing(genreId);
   const genre = GENRES_DATA.find(g => g.id === genreId);
   if (!genre) return;
 
