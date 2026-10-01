@@ -678,11 +678,19 @@ If no reasonable match exists, set status to "unclear", intent to "unknown", boo
         if not completion:
             raise last_err or Exception("All Groq models failed")
 
-        raw_reply = completion.choices[0].message.content.strip()
-        
+        raw_reply = (completion.choices[0].message.content or "").strip()
+
+        # Guard: model returned empty output (Groq content-filter or empty generation)
+        if not raw_reply:
+            raise ValueError("Groq model returned an empty response (model output error).")
+
         if raw_reply.startswith("```"):
             raw_reply = re.sub(r'^```(?:json)?\n?', '', raw_reply)
             raw_reply = re.sub(r'\n?```$', '', raw_reply).strip()
+
+        # Guard: still empty after stripping markdown fences
+        if not raw_reply:
+            raise ValueError("Groq model returned only markdown fences with no content.")
 
         parsed = json.loads(raw_reply)
 

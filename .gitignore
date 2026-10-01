@@ -1,21 +1,34 @@
-# Node dependencies
-node_modules/
-dist/
-
-# Python cache
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-*.env
-.venv
-env/
+*.pyc
+.venv/
 venv/
+env/
 ENV/
+
+# Environment (secrets — never commit)
+.env
+.env.*
+!.env.example
+
+# Node (archived React prototype)
+node_modules/
+
+# Build outputs
+dist/
+
+# Backup files
+*.bak
 
 # System / IDE
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
-*.bak
+
+# Documentation & Audit
+documentation/
+PROJECT_AUDIT.md
 
