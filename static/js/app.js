@@ -213,25 +213,100 @@ async function fetchNewLibrarianGreeting(initial = false) {
     const data = await res.json();
     setLibrarianText(data.greeting);
   } catch (e) {
-    setLibrarianText("Hi there! What would you like to read today? What interests you — self-help, wealth and business, Indian classics, fiction, or philosophy?");
+    setLibrarianText("Hi there! What would you like to read today? What interests you: self-help, wealth and business, Indian classics, fiction, or philosophy?");
   }
 }
 
+let isLibrarianChatMode = false;
+
+function openLibrarianChat() {
+  isLibrarianChatMode = true;
+  const bubble = document.getElementById("librarian-bubble");
+  const normalBody = document.getElementById("librarian-normal-body");
+  const chatBody = document.getElementById("librarian-chat-body");
+  const beacon = document.getElementById("librarian-beacon");
+  const chatSub = document.getElementById("librarian-chat-sub");
+  const refreshBtn = document.getElementById("librarian-refresh-btn");
+
+  if (beacon) beacon.style.display = "none";
+  if (bubble) {
+    bubble.style.display = "block";
+    bubble.classList.remove("mode-normal");
+    bubble.classList.add("mode-chat");
+  }
+  if (normalBody) normalBody.style.display = "none";
+  if (chatBody) chatBody.style.display = "flex";
+  if (chatSub) chatSub.style.display = "inline";
+  if (refreshBtn) refreshBtn.style.display = "none";
+
+  const input = document.getElementById("chat-input");
+  if (input) {
+    input.disabled = false;
+    setTimeout(() => input.focus(), 80);
+  }
+}
+window.openLibrarianChat = openLibrarianChat;
+
+function closeLibrarianChat() {
+  isLibrarianChatMode = false;
+  const bubble = document.getElementById("librarian-bubble");
+  const normalBody = document.getElementById("librarian-normal-body");
+  const chatBody = document.getElementById("librarian-chat-body");
+  const chatSub = document.getElementById("librarian-chat-sub");
+  const refreshBtn = document.getElementById("librarian-refresh-btn");
+
+  if (bubble) {
+    bubble.classList.remove("mode-chat");
+    bubble.classList.add("mode-normal");
+  }
+  if (chatBody) chatBody.style.display = "none";
+  if (normalBody) normalBody.style.display = "block";
+  if (chatSub) chatSub.style.display = "none";
+  if (refreshBtn) refreshBtn.style.display = "inline";
+}
+window.closeLibrarianChat = closeLibrarianChat;
+
+function handleLibrarianClose() {
+  if (isLibrarianChatMode) {
+    closeLibrarianChat();
+  } else {
+    closeLibrarianBubble();
+  }
+}
+window.handleLibrarianClose = handleLibrarianClose;
+
 function closeLibrarianBubble() {
   const bubble = document.getElementById("librarian-bubble");
+  const beacon = document.getElementById("librarian-beacon");
   if (bubble) bubble.style.display = "none";
+  if (beacon) beacon.style.display = "flex";
 }
+window.closeLibrarianBubble = closeLibrarianBubble;
+
+function quickChatInquiry(queryText) {
+  const input = document.getElementById("chat-input");
+  if (input) {
+    input.value = queryText;
+    sendChatMessage();
+  }
+}
+window.quickChatInquiry = quickChatInquiry;
 
 function openOrCycleLibrarian() {
-  const bubble = document.getElementById("librarian-bubble");
-  if (bubble) bubble.style.display = "block";
-  fetchNewLibrarianGreeting();
+  openLibrarianChat();
 }
+window.openOrCycleLibrarian = openOrCycleLibrarian;
 
 function setLibrarianText(text) {
   const bubble = document.getElementById("librarian-bubble");
+  const beacon = document.getElementById("librarian-beacon");
   const textEl = document.getElementById("librarian-text");
-  if (bubble) bubble.style.display = "block";
+
+  // In normal mode, ensure bubble is visible and beacon is hidden
+  if (!isLibrarianChatMode && bubble) {
+    bubble.style.display = "block";
+    if (beacon) beacon.style.display = "none";
+  }
   if (textEl) {
     textEl.style.opacity = "0";
     setTimeout(() => {

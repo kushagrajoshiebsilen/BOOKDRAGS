@@ -108,7 +108,7 @@ def api_all_books():
 def api_librarian_greet():
     """Friendly greeting endpoint for Master Keith."""
     greetings = [
-        "Hi there! What would you like to read today? What interests you â€” self-help, wealth and business, Indian classics, fiction, or philosophy?",
+        "Hi there! What would you like to read today? What interests you: self-help, wealth and business, Indian classics, fiction, or philosophy?",
         "Hello! Looking for something inspiring today? Feel free to click any shelf or ask me for a recommendation!",
         "Welcome! We have over 540 great books here. Whether you want to improve your habits, explore business, or read a classic story, just click a shelf to start!",
         "Hi there! Take your time wandering the shelves. If any title catches your eye, click on it and I will gladly share my thoughts on it!"

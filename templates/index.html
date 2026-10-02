@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BookHaven — Gothic Library Archives</title>
   <meta name="description" content="A cinematic gothic library book recommendation app powered by Python Flask. Discover over 540 verified books across 20 majestic shelves.">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=6">
 </head>
 <body>
 
@@ -69,126 +69,171 @@
         </div>
         <div class="bg-overlay"></div>
 
-        <!-- ─── MASTER KEITH (HEAD LIBRARIAN CHAT & DIALOGUE POD) ─── -->
-        <div id="librarian-bubble" class="librarian-pod">
+        <!-- ─── MASTER KEITH (HEAD LIBRARIAN POD: GREETING & CHAT IN SAME PLACE) ─── -->
+        <div id="librarian-bubble" class="librarian-pod mode-normal" onclick="event.stopPropagation();">
           <div class="librarian-header">
             <div class="lh-left">
               <span class="candle-glow">🕯️</span>
-              <span class="librarian-name">MASTER KEITH • HEAD LIBRARIAN</span>
+              <div>
+                <span class="librarian-name">MASTER KEITH • HEAD LIBRARIAN</span>
+                <span id="librarian-chat-sub" class="librarian-sub-tag" style="display:none;">Audience</span>
+              </div>
             </div>
             <div class="lh-right">
-              <span class="librarian-hint" onclick="fetchNewLibrarianGreeting()" style="cursor:pointer;" title="New Greeting">↻</span>
-              <button class="librarian-close-btn" onclick="event.stopPropagation(); closeLibrarianBubble();" title="Close dialogue">✕</button>
+              <span id="librarian-refresh-btn" class="librarian-hint" onclick="fetchNewLibrarianGreeting()" style="cursor:pointer;" title="New Greeting">↻</span>
+              <button class="librarian-close-btn" onclick="handleLibrarianClose()" title="Close">✕</button>
             </div>
           </div>
 
-          <!-- Scrollable Message History -->
-          <div id="chat-history" class="chat-history-container">
+          <!-- NORMAL MODE BODY: Greeting & Shelf/Book illumination -->
+          <div id="librarian-normal-body" class="librarian-normal-body">
             <div id="librarian-text-wrapper">
               <p id="librarian-text" class="librarian-quote" onclick="fetchNewLibrarianGreeting()" title="Click to hear advice"></p>
             </div>
+            <div class="librarian-pod-actions">
+              <button class="btn-converse-librarian" onclick="openLibrarianChat()">
+                <span>💬</span> TALK TO MASTER KEITH
+              </button>
+            </div>
           </div>
 
-          <!-- Gothic Chat Form -->
-          <div class="gothic-chat-form" onclick="event.stopPropagation();">
-            <input 
-              id="chat-input" 
-              type="text" 
-              class="gothic-chat-input" 
-              placeholder="Ask Master Keith (e.g. 'I want Atomic Habits', 'scary stories')..." 
-              onkeydown="if(event.key==='Enter'){ event.preventDefault(); sendChatMessage(); }"
-              autocomplete="off"
-            />
-            <button id="chat-send-btn" class="gothic-chat-btn" onclick="sendChatMessage()" title="Send Inquiry">
-              <span id="chat-btn-text">INQUIRE</span>
-              <span id="chat-spinner" class="chat-spinner" style="display:none;">🕯️</span>
-            </button>
+          <!-- CHAT MODE BODY: Interactive Conversation (When tapping on the Librarian) -->
+          <div id="librarian-chat-body" class="librarian-chat-body" style="display:none;">
+            <!-- Scrollable Message History -->
+            <div id="chat-history" class="chat-history-container">
+              <div class="chat-msg chat-msg-librarian">
+                "Greetings, traveler. I am Master Keith, guardian of these sacred halls. What wisdom, genre, or specific book do you seek today? Inquire below."
+              </div>
+            </div>
+
+            <!-- Quick Prompt Chips -->
+            <div class="chat-quick-chips">
+              <button class="chat-chip" onclick="quickChatInquiry('I want Atomic Habits')">✨ Atomic Habits</button>
+              <button class="chat-chip" onclick="quickChatInquiry('Show me Sacred Hindu Scriptures')">🕉️ Hindu Scriptures</button>
+              <button class="chat-chip" onclick="quickChatInquiry('Recommend me a gothic horror classic')">🕯️ Gothic Horror</button>
+              <button class="chat-chip" onclick="quickChatInquiry('Best book on wealth and business')">💰 Wealth & Money</button>
+            </div>
+
+            <!-- Gothic Chat Form -->
+            <div class="gothic-chat-form">
+              <input 
+                id="chat-input" 
+                type="text" 
+                class="gothic-chat-input" 
+                placeholder="Ask Master Keith (e.g. 'I want Atomic Habits', 'scary books')..." 
+                onkeydown="if(event.key==='Enter'){ event.preventDefault(); sendChatMessage(); }"
+                autocomplete="off"
+              />
+              <button id="chat-send-btn" class="gothic-chat-btn" onclick="sendChatMessage()" title="Send Inquiry">
+                <span id="chat-btn-text">INQUIRE</span>
+                <span id="chat-spinner" class="chat-spinner" style="display:none;">🕯️</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Librarian Desk Click Hotspot (West Wing) -->
-        <div class="hotspot librarian-hotspot" style="left:5%;top:64%;width:10%;height:32%;" onclick="openOrCycleLibrarian()">
-          <div class="genre-tooltip"><h4>Archivist Keith • Chief Librarian</h4><p style="font-size:0.65rem;color:#e8dcc4;">Click to converse</p></div>
+        <!-- ─── MASTER KEITH DESK & BEACON HOTSPOT (WEST WING) ─── -->
+        <!-- Floating Visual Beacon directly above Master Keith at the desk (visible when dialogue is closed) -->
+        <div id="librarian-beacon" class="librarian-beacon" style="left:9.1%;top:63%;display:none;" onclick="openLibrarianChat()" title="Click to speak with Master Keith">
+          <span class="beacon-pulse"></span>
+          <span class="beacon-candle">🕯️</span>
+          <span class="beacon-label">MASTER KEITH</span>
+          <span class="beacon-sub">💬 CLICK TO TALK</span>
         </div>
 
-        <!-- ─── WEST WING HOTSPOTS (0% - 50% of 200vw canvas) ─── -->
-        <!-- COLUMN 1: Personal Growth -->
-        <div class="hotspot" data-genre-id="self-help" style="left:2.5%;top:8%;width:7.5%;height:18%;" onclick="openGenreDrawer('self-help')">
+        <!-- Large clickable hotspot over Master Keith and his desk -->
+        <div class="hotspot librarian-hotspot" style="left:3.5%;top:64%;width:13.5%;height:32%;" onclick="openLibrarianChat()">
+          <div class="genre-tooltip">
+            <h4>Master Keith • Head Librarian</h4>
+            <p style="font-size:0.68rem;color:#ffcc70;">Click to converse with the Archivist</p>
+          </div>
+        </div>
+
+        <!-- ─── WEST WING HOTSPOTS (0% - 50% of 200vw canvas • 11 SHELVES) ─── -->
+        <!-- BAY 1: Sacred Epics & Timeless Wisdom (Above Master Keith's Desk) -->
+        <div class="hotspot" data-genre-id="hindu-scriptures" style="left:4.5%;top:7%;width:11%;height:22%;" onclick="openGenreDrawer('hindu-scriptures')">
+          <div class="genre-tooltip"><h4>Hindu Scriptures & Sacred Epics</h4><p style="font-size:0.65rem;color:#ffcc70;">Rigveda, Yajurveda, Bhagavad Gita, Upanishads</p></div>
+        </div>
+        <div class="hotspot" data-genre-id="ancient-wisdom" style="left:4.5%;top:31%;width:11%;height:22%;" onclick="openGenreDrawer('ancient-wisdom')">
+          <div class="genre-tooltip"><h4>Vedic & Ancient Epics</h4><p style="font-size:0.65rem;color:#ffcc70;">Bhagavad Gita, Mahabharata, Chanakya Neeti</p></div>
+        </div>
+
+        <!-- BAY 2: Personal Growth & Wealth (Grand Center-Left Arch Bay) -->
+        <div class="hotspot" data-genre-id="self-help" style="left:16.5%;top:7%;width:8.5%;height:22%;" onclick="openGenreDrawer('self-help')">
           <div class="genre-tooltip"><h4>Self-Help & Habits</h4><p style="font-size:0.65rem;color:#ffcc70;">Ikigai, Atomic Habits, Subconscious Mind</p></div>
         </div>
-        <div class="hotspot" data-genre-id="self-development" style="left:2.5%;top:28%;width:7.5%;height:18%;" onclick="openGenreDrawer('self-development')">
+        <div class="hotspot" data-genre-id="self-development" style="left:16.5%;top:31%;width:8.5%;height:22%;" onclick="openGenreDrawer('self-development')">
           <div class="genre-tooltip"><h4>Self-Development & Mastery</h4><p style="font-size:0.65rem;color:#ffcc70;">Can't Hurt Me, 12 Rules for Life, 48 Laws</p></div>
         </div>
-        <div class="hotspot" data-genre-id="business-finance" style="left:2.5%;top:48%;width:7.5%;height:18%;" onclick="openGenreDrawer('business-finance')">
+        <div class="hotspot" data-genre-id="business-finance" style="left:16.5%;top:55%;width:8.5%;height:26%;" onclick="openGenreDrawer('business-finance')">
           <div class="genre-tooltip"><h4>Money & Business</h4><p style="font-size:0.65rem;color:#ffcc70;">Rich Dad Poor Dad, Psychology of Money</p></div>
         </div>
-        <div class="hotspot" data-genre-id="indian-literature" style="left:1%;top:68%;width:4.5%;height:26%;" onclick="openGenreDrawer('indian-literature')">
+
+        <!-- BAY 3: Mind, Philosophy & Indian Classics (Grand Center-Right Arch Bay) -->
+        <div class="hotspot" data-genre-id="psychology" style="left:26%;top:7%;width:8.5%;height:22%;" onclick="openGenreDrawer('psychology')">
+          <div class="genre-tooltip"><h4>Mind, Behavior & Soul</h4><p style="font-size:0.65rem;color:#ffcc70;">Thinking Fast & Slow, Man's Search For Meaning</p></div>
+        </div>
+        <div class="hotspot" data-genre-id="philosophy" style="left:26%;top:31%;width:8.5%;height:22%;" onclick="openGenreDrawer('philosophy')">
+          <div class="genre-tooltip"><h4>Stoicism & Philosophy</h4><p style="font-size:0.65rem;color:#ffcc70;">Meditations, Letters from a Stoic, Plato</p></div>
+        </div>
+        <div class="hotspot" data-genre-id="indian-literature" style="left:26%;top:55%;width:8.5%;height:26%;" onclick="openGenreDrawer('indian-literature')">
           <div class="genre-tooltip"><h4>Indian Masterpieces</h4><p style="font-size:0.65rem;color:#ffcc70;">Malgudi Days, Train to Pakistan, The Guide</p></div>
         </div>
 
-        <!-- COLUMN 2: Sacred Epics & Philosophy -->
-        <div class="hotspot" data-genre-id="hindu-scriptures" style="left:11%;top:8%;width:8%;height:24%;" onclick="openGenreDrawer('hindu-scriptures')">
-          <div class="genre-tooltip"><h4>Hindu Scriptures & Sacred Epics</h4><p style="font-size:0.65rem;color:#ffcc70;">Rigveda, Yajurveda, Bhagavad Gita, Upanishads</p></div>
-        </div>
-        <div class="hotspot" data-genre-id="ancient-wisdom" style="left:11%;top:34%;width:8%;height:14%;" onclick="openGenreDrawer('ancient-wisdom')">
-          <div class="genre-tooltip"><h4>Vedic & Ancient Epics</h4><p style="font-size:0.65rem;color:#ffcc70;">Bhagavad Gita, Mahabharata, Chanakya Neeti</p></div>
-        </div>
-        <div class="hotspot" data-genre-id="psychology" style="left:11%;top:50%;width:8%;height:14%;" onclick="openGenreDrawer('psychology')">
-          <div class="genre-tooltip"><h4>Mind, Behavior & Soul</h4><p style="font-size:0.65rem;color:#ffcc70;">Thinking Fast & Slow, Man's Search For Meaning</p></div>
-        </div>
-        <div class="hotspot" data-genre-id="philosophy" style="left:15.5%;top:60%;width:6%;height:30%;" onclick="openGenreDrawer('philosophy')">
-          <div class="genre-tooltip"><h4>Stoicism & Philosophy</h4><p style="font-size:0.65rem;color:#ffcc70;">Meditations, Letters from a Stoic, Plato</p></div>
-        </div>
-
-        <!-- COLUMN 3: Chronicles, Cosmos & Tech -->
-        <div class="hotspot" data-genre-id="history-chronicles" style="left:20%;top:6%;width:10%;height:24%;" onclick="openGenreDrawer('history-chronicles')">
+        <!-- BAY 4: Chronicles, Cosmos & Tech (Grand Right Arch Bay) -->
+        <div class="hotspot" data-genre-id="history-chronicles" style="left:35.5%;top:7%;width:10%;height:22%;" onclick="openGenreDrawer('history-chronicles')">
           <div class="genre-tooltip"><h4>Chronicles of Empires</h4><p style="font-size:0.65rem;color:#ffcc70;">Discovery of India, India After Gandhi, Silk Roads</p></div>
         </div>
-        <div class="hotspot" data-genre-id="science" style="left:20%;top:32%;width:10%;height:26%;" onclick="openGenreDrawer('science')">
+        <div class="hotspot" data-genre-id="science" style="left:35.5%;top:31%;width:10%;height:22%;" onclick="openGenreDrawer('science')">
           <div class="genre-tooltip"><h4>Cosmos & Scientific Wonder</h4><p style="font-size:0.65rem;color:#ffcc70;">Cosmos, Brief History of Time, Sapiens</p></div>
         </div>
-        <div class="hotspot" data-genre-id="technology" style="left:22%;top:60%;width:8%;height:32%;" onclick="openGenreDrawer('technology')">
+        <div class="hotspot" data-genre-id="technology" style="left:35.5%;top:55%;width:10%;height:28%;" onclick="openGenreDrawer('technology')">
           <div class="genre-tooltip"><h4>Code, Algorithms & Python</h4><p style="font-size:0.65rem;color:#ffcc70;">Fluent Python, Automate the Boring Stuff, Clean Code</p></div>
         </div>
 
-        <!-- ─── EAST WING HOTSPOTS (50% - 100% of 200vw canvas) ─── -->
-        <!-- COLUMN 4: Enigmas & Gothic Horror -->
-        <div class="hotspot" data-genre-id="crime-thriller" style="left:81%;top:8%;width:8%;height:24%;" onclick="openGenreDrawer('crime-thriller')">
-          <div class="genre-tooltip"><h4>Enigmas & Detective Sleuths</h4><p style="font-size:0.65rem;color:#ffcc70;">Sherlock Holmes, Feluda, Byomkesh Bakshi</p></div>
-        </div>
-        <div class="hotspot" data-genre-id="horror-gothic" style="left:81%;top:34%;width:8%;height:24%;" onclick="openGenreDrawer('horror-gothic')">
-          <div class="genre-tooltip"><h4>Gothic Dread & Cosmic Fear</h4><p style="font-size:0.65rem;color:#ffcc70;">Frankenstein, Dracula, The Shining</p></div>
-        </div>
-        <div class="hotspot" data-genre-id="mythology" style="left:81%;top:60%;width:7%;height:32%;" onclick="openGenreDrawer('mythology')">
-          <div class="genre-tooltip"><h4>Mythic Sagas & Ancient Gods</h4><p style="font-size:0.65rem;color:#ffcc70;">Shiva Trilogy, Palace of Illusions, Song of Achilles</p></div>
-        </div>
-
-        <!-- COLUMN 5: High Fantasy, Dystopian & Biographies -->
-        <div class="hotspot" data-genre-id="fantasy" style="left:90%;top:8%;width:8%;height:22%;" onclick="openGenreDrawer('fantasy')">
+        <!-- ─── EAST WING HOTSPOTS (50% - 100% of 200vw canvas • 11 SHELVES) ─── -->
+        <!-- BAY 1: High Fantasy, Dystopia & Quests (Left Bay of East Wing) -->
+        <div class="hotspot" data-genre-id="fantasy" style="left:54.5%;top:7%;width:10%;height:22%;" onclick="openGenreDrawer('fantasy')">
           <div class="genre-tooltip"><h4>High Fantasy & Magic</h4><p style="font-size:0.65rem;color:#ffcc70;">Lord of the Rings, Game of Thrones, Mistborn</p></div>
         </div>
-        <div class="hotspot" data-genre-id="dystopian" style="left:90%;top:32%;width:8%;height:24%;" onclick="openGenreDrawer('dystopian')">
+        <div class="hotspot" data-genre-id="dystopian" style="left:54.5%;top:31%;width:10%;height:22%;" onclick="openGenreDrawer('dystopian')">
           <div class="genre-tooltip"><h4>Dystopian Visions</h4><p style="font-size:0.65rem;color:#ffcc70;">1984, Brave New World, Fahrenheit 451</p></div>
         </div>
-        <div class="hotspot" data-genre-id="biography" style="left:89%;top:58%;width:5%;height:34%;" onclick="openGenreDrawer('biography')">
-          <div class="genre-tooltip"><h4>Lives of Immortals</h4><p style="font-size:0.65rem;color:#ffcc70;">Wings of Fire, Autobiography of a Yogi, Steve Jobs</p></div>
+        <div class="hotspot" data-genre-id="young-adult" style="left:54.5%;top:55%;width:10%;height:28%;" onclick="openGenreDrawer('young-adult')">
+          <div class="genre-tooltip"><h4>Coming of Age & Quests</h4><p style="font-size:0.65rem;color:#ffcc70;">Percy Jackson, Harry Potter, Ruskin Bond</p></div>
         </div>
 
-        <!-- ADDITIONAL EAST ARCHIVES -->
-        <div class="hotspot" data-genre-id="classics" style="left:51%;top:8%;width:3%;height:50%;" onclick="openGenreDrawer('classics')">
-          <div class="genre-tooltip"><h4>World Classics</h4><p style="font-size:0.65rem;color:#ffcc70;">Crime & Punishment, War & Peace</p></div>
+        <!-- BAY 2: Enigmas, Gothic Dread & Romance (Center-Left Bay of East Wing) -->
+        <div class="hotspot" data-genre-id="crime-thriller" style="left:66%;top:7%;width:8.5%;height:22%;" onclick="openGenreDrawer('crime-thriller')">
+          <div class="genre-tooltip"><h4>Enigmas & Detective Sleuths</h4><p style="font-size:0.65rem;color:#ffcc70;">Sherlock Holmes, Feluda, Byomkesh Bakshi</p></div>
         </div>
-        <div class="hotspot" data-genre-id="health-wellness" style="left:97%;top:8%;width:2.5%;height:50%;" onclick="openGenreDrawer('health-wellness')">
-          <div class="genre-tooltip"><h4>Vitality & Longevity</h4><p style="font-size:0.65rem;color:#ffcc70;">Why We Sleep, Breath, Wim Hof Method</p></div>
+        <div class="hotspot" data-genre-id="horror-gothic" style="left:66%;top:31%;width:8.5%;height:22%;" onclick="openGenreDrawer('horror-gothic')">
+          <div class="genre-tooltip"><h4>Gothic Dread & Cosmic Fear</h4><p style="font-size:0.65rem;color:#ffcc70;">Frankenstein, Dracula, The Shining</p></div>
         </div>
-        <div class="hotspot" data-genre-id="romance-drama" style="left:94.5%;top:60%;width:5%;height:32%;" onclick="openGenreDrawer('romance-drama')">
-          <div class="genre-tooltip"><h4>Tragic Romance</h4><p style="font-size:0.65rem;color:#ffcc70;">Pride & Prejudice, Normal People</p></div>
+        <div class="hotspot" data-genre-id="romance-drama" style="left:66%;top:55%;width:8.5%;height:26%;" onclick="openGenreDrawer('romance-drama')">
+          <div class="genre-tooltip"><h4>Tragic Romance</h4><p style="font-size:0.65rem;color:#ffcc70;">Pride & Prejudice, Normal People, Wuthering Heights</p></div>
         </div>
-        <div class="hotspot" data-genre-id="poetry-ghazals" style="left:60%;top:60%;width:5%;height:32%;" onclick="openGenreDrawer('poetry-ghazals')">
+
+        <!-- BAY 3: Mythic Gods, World Classics & Poetry (Center-Right Bay of East Wing) -->
+        <div class="hotspot" data-genre-id="mythology" style="left:75.5%;top:7%;width:8.5%;height:22%;" onclick="openGenreDrawer('mythology')">
+          <div class="genre-tooltip"><h4>Mythic Sagas & Ancient Gods</h4><p style="font-size:0.65rem;color:#ffcc70;">Shiva Trilogy, Palace of Illusions, Song of Achilles</p></div>
+        </div>
+        <div class="hotspot" data-genre-id="classics" style="left:75.5%;top:31%;width:8.5%;height:22%;" onclick="openGenreDrawer('classics')">
+          <div class="genre-tooltip"><h4>World Classics</h4><p style="font-size:0.65rem;color:#ffcc70;">Crime & Punishment, War & Peace, Great Gatsby</p></div>
+        </div>
+        <div class="hotspot" data-genre-id="poetry-ghazals" style="left:75.5%;top:55%;width:8.5%;height:26%;" onclick="openGenreDrawer('poetry-ghazals')">
           <div class="genre-tooltip"><h4>Poetry & Ghazals</h4><p style="font-size:0.65rem;color:#ffcc70;">Gitanjali, Diwan-e-Ghalib, Madhushala</p></div>
         </div>
-        <div class="hotspot" data-genre-id="young-adult" style="left:94%;top:38%;width:4%;height:20%;" onclick="openGenreDrawer('young-adult')">
-          <div class="genre-tooltip"><h4>Coming of Age & Quests</h4><p style="font-size:0.65rem;color:#ffcc70;">Percy Jackson, Harry Potter, Ruskin Bond</p></div>
+
+        <!-- BAY 4: Lives of Immortals & Vitality (Right Bay of East Wing) -->
+        <div class="hotspot" data-genre-id="biography" style="left:86%;top:7%;width:10%;height:22%;" onclick="openGenreDrawer('biography')">
+          <div class="genre-tooltip"><h4>Lives of Immortals</h4><p style="font-size:0.65rem;color:#ffcc70;">Wings of Fire, Autobiography of a Yogi, Steve Jobs</p></div>
+        </div>
+        <div class="hotspot" data-genre-id="health-wellness" style="left:86%;top:31%;width:10%;height:22%;" onclick="openGenreDrawer('health-wellness')">
+          <div class="genre-tooltip"><h4>Vitality & Longevity</h4><p style="font-size:0.65rem;color:#ffcc70;">Why We Sleep, Breath, Wim Hof Method</p></div>
+        </div>
+        <div class="hotspot" style="left:86%;top:55%;width:10%;height:28%;" onclick="toggleShelfBrowser()">
+          <div class="genre-tooltip"><h4>Grand Archive Stacks</h4><p style="font-size:0.65rem;color:#ffcc70;">Click to browse all 22 Shelves (594 Folios)</p></div>
         </div>
 
       </div>
