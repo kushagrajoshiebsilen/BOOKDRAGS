@@ -434,39 +434,30 @@ async function playLibrarianMovement(shelfTier = "down", onComplete = null, capt
     captionEl.textContent = captionText || "✦ MASTER KEITH RETRIEVING FOLIO FROM ARCHIVES ✦";
   }
 
-  // Ensure strict HTTPS autoplay compliance across mobile Safari, Chrome, Edge
-  video.muted = true;
-  video.defaultMuted = true;
-  video.playsInline = true;
-  video.setAttribute("muted", "");
-  video.setAttribute("playsinline", "");
-  video.setAttribute("webkit-playsinline", "");
-
   video.onended = null;
   video.onerror = null;
 
-  // Use web-standard underscore path with automatic fallback
-  const primarySrc = "/static/assets/going_to_down_shelf.mp4";
-  const fallbackSrc = "/assets/going_to_down_shelf.mp4";
-
-  if (!video.src || (!video.src.includes("going_to_down_shelf.mp4") && !video.src.includes("going%20to%20down%20shelf"))) {
-    video.src = primarySrc;
+  const targetSrc = "/static/assets/going%20to%20down%20shelf.mp4";
+  if (!video.src || (!video.src.includes("going%20to%20down%20shelf") && !video.src.includes("going to down shelf"))) {
+    video.src = targetSrc;
   }
 
-  // Show atmospheric overlay immediately so user has instant feedback
-  overlay.style.display = "block";
-  requestAnimationFrame(() => {
-    overlay.style.opacity = "1";
-  });
+  video.currentTime = 0;
 
-  let finished = false;
-  let safetyTimer = null;
+  let hasFadedIn = false;
+  const showVideoOverlay = () => {
+    if (!hasFadedIn) {
+      hasFadedIn = true;
+      overlay.style.display = "block";
+      requestAnimationFrame(() => {
+        overlay.style.opacity = "1";
+      });
+    }
+  };
 
   const handleEnded = () => {
-    if (finished) return;
-    finished = true;
-    if (safetyTimer) clearTimeout(safetyTimer);
     video.pause();
+    video.removeEventListener("timeupdate", onTimeUpdate);
     setTimeout(() => {
       overlay.style.opacity = "0";
       setTimeout(() => {
@@ -477,42 +468,31 @@ async function playLibrarianMovement(shelfTier = "down", onComplete = null, capt
     }, 250);
   };
 
-  // Safety fallback timeout: Video is 10.1s; auto-resolve after 12s so user is never stuck
-  safetyTimer = setTimeout(() => {
-    handleEnded();
-  }, 12000);
-
   video.onended = handleEnded;
-
-  let hasRetried = false;
   video.onerror = (e) => {
-    console.warn("Librarian video load error on primary path, trying CDN fallback:", e);
-    if (!hasRetried) {
-      hasRetried = true;
-      video.src = fallbackSrc;
-      video.muted = true;
-      video.load();
-      video.play().catch(err => {
-        console.warn("Fallback play error:", err);
-        handleEnded();
-      });
-      return;
-    }
-    handleEnded();
+    console.warn("Video playback error:", e);
+    video.removeEventListener("timeupdate", onTimeUpdate);
+    overlay.style.display = "none";
+    isLibrarianMoving = false;
+    if (onComplete) onComplete();
   };
 
+  const onTimeUpdate = () => {
+    if (video.currentTime > 0.05) {
+      video.removeEventListener("timeupdate", onTimeUpdate);
+      showVideoOverlay();
+    }
+  };
+  video.addEventListener("timeupdate", onTimeUpdate);
+
   try {
-    video.currentTime = 0;
     await video.play();
   } catch (e) {
-    console.warn("Autoplay initial attempt caught, re-verifying mute and retrying:", e);
-    video.muted = true;
-    try {
-      await video.play();
-    } catch (err2) {
-      console.warn("Autoplay blocked or network stalled, proceeding gracefully:", err2);
-      handleEnded();
-    }
+    console.warn("Play error:", e);
+    video.removeEventListener("timeupdate", onTimeUpdate);
+    overlay.style.display = "none";
+    isLibrarianMoving = false;
+    if (onComplete) onComplete();
   }
 }
 

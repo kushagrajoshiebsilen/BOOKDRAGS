@@ -4,7 +4,7 @@ A Python Flask web application for college project.
 Powers 540+ books across 20 distinct library shelves with friendly Librarian commentary & recommendations.
 """
 
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_from_directory
 import json
 import os
 import random
@@ -746,7 +746,16 @@ If no reasonable match exists, set status to "unclear", intent to "unknown", boo
         })
 
 
-# â”€â”€â”€ Run â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+@app.route('/assets/<path:filename>')
+def serve_assets(filename):
+    """Directly serve assets with HTTP 206 Partial Content byte-range support."""
+    for folder in ['public/assets', 'static/assets']:
+        full_dir = os.path.join(app.root_path, folder)
+        if os.path.exists(os.path.join(full_dir, filename)):
+            return send_from_directory(full_dir, filename, conditional=True)
+    return ("Asset not found", 404)
+
+
 if __name__ == "__main__":
     print("BookHaven Gothic Library - Starting server...")
     cache = load_books_cache()

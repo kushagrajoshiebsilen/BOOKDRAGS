@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=8">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=9">
 </head>
 <body>
 
@@ -450,11 +450,11 @@
        LIBRARIAN MOVEMENT VIDEO OVERLAY
        ═══════════════════════════════════════════════════════ -->
   <div id="movement-video-overlay" class="movement-video-overlay" style="display:none;opacity:0;" onclick="skipLibrarianMovement(event)">
-    <video id="movement-video" class="movement-video" src="{{ url_for('static', filename='assets/going to down shelf.mp4') }}" preload="auto" playsinline muted></video>
+    <video id="movement-video" class="movement-video" src="{{ url_for('static', filename='assets/going_to_down_shelf.mp4') }}" preload="auto" playsinline webkit-playsinline muted></video>
     <button class="video-skip-btn" onclick="skipLibrarianMovement(event)" title="Skip to Archives">SKIP ✕</button>
     <div class="video-caption-badge" id="video-caption-badge">✦ MASTER KEITH RETRIEVING FOLIO FROM ARCHIVES ✦</div>
   </div>
 
-  <script src="{{ url_for('static', filename='js/app.js') }}?v=8"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}?v=9"></script>
 </body>
 </html>
