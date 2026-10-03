@@ -3,12 +3,14 @@
    ═══════════════════════════════════════════════════════════ */
 
 /* ─── Google Fonts ─────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
 
 /* ─── Reset & Base ─────────────────────────────────────── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --bg-deep: #0b0704;
   --gold: #d4a24c;
   --gold-bright: #ffcc70;
@@ -22,14 +24,16 @@
 body {
   background: var(--bg-deep);
   color: var(--parchment);
-  font-family: 'EB Garamond', Georgia, serif;
+  font-family: var(--font-body);
   overflow: hidden;
   height: 100vh;
   width: 100vw;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.gothic { font-family: 'Cinzel Decorative', serif; }
-.subheading { font-family: 'Cormorant Garamond', Georgia, serif; }
+.gothic { font-family: var(--font-display); font-weight: 700; }
+.subheading { font-family: var(--font-body); font-weight: 500; }
 
 /* ─── Screen Container ─────────────────────────────────── */
 .screen {
@@ -117,9 +121,10 @@ body {
   backdrop-filter: blur(8px);
   border: 1px solid rgba(212, 162, 76, 0.4);
   color: #ffcc70;
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
   padding: 4px 16px;
   border-radius: 20px;
   pointer-events: none;
@@ -160,16 +165,17 @@ body {
 
 /* ─── Ghost Buttons (No Yellow Boxes!) ───────────────── */
 .btn-ghost {
-  padding: 8px 18px;
-  background: rgba(10, 7, 5, 0.65);
+  padding: 9px 18px;
+  background: rgba(10, 7, 5, 0.72);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(212, 162, 76, 0.25);
+  border: 1px solid rgba(212, 162, 76, 0.3);
   border-radius: 8px;
   color: var(--parchment-light);
-  font-family: 'Cinzel Decorative', serif;
-  letter-spacing: 0.15em;
-  font-size: 0.78rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  font-size: 0.82rem;
   cursor: pointer;
   transition: all 0.25s ease;
   text-decoration: none;
@@ -191,11 +197,11 @@ body {
   position: absolute;
   bottom: 22%;
   left: 8%;
-  width: 320px;
+  width: 340px;
   max-width: 80vw;
-  background: rgba(12, 9, 6, 0.8);
+  background: rgba(12, 9, 6, 0.88);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(212, 162, 76, 0.3);
+  border: 1px solid rgba(212, 162, 76, 0.35);
   padding: 18px;
   border-radius: 12px;
   z-index: 10;
@@ -203,19 +209,19 @@ body {
   transition: opacity 0.5s ease;
 }
 .dialogue-box .speaker {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 11px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.74rem;
   color: var(--gold-bright);
-  letter-spacing: 0.15em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   margin-bottom: 6px;
 }
 .dialogue-box .quote {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.95rem;
+  font-family: var(--font-body);
+  font-size: 0.96rem;
   color: var(--parchment-light);
-  font-style: italic;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .door-prompt {
@@ -276,8 +282,10 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 .genre-tooltip h4 {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.72rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
   color: var(--gold-bright);
 }
 
@@ -324,15 +332,16 @@ body {
   border-color: rgba(14, 9, 6, 0.96) transparent transparent transparent;
 }
 .librarian-sub-tag {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.55rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.62rem;
   color: #ffcc70;
   background: rgba(212, 162, 76, 0.2);
   border: 1px solid rgba(212, 162, 76, 0.4);
   padding: 1px 6px;
   border-radius: 8px;
   margin-left: 6px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
 }
 .librarian-chat-body {
   display: flex;
@@ -351,9 +360,10 @@ body {
   background: rgba(45, 30, 18, 0.85);
   border: 1px solid rgba(212, 162, 76, 0.5);
   color: #ffcc70;
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
   padding: 5px 12px;
   border-radius: 6px;
   cursor: pointer;
@@ -398,15 +408,16 @@ body {
   animation: candleFlicker 2s infinite alternate;
 }
 .beacon-label {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.68rem;
+  font-family: var(--font-display);
   font-weight: 700;
+  font-size: 0.72rem;
   color: var(--gold-bright);
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
 }
 .beacon-sub {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.58rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.62rem;
   color: #ffcc70;
   background: rgba(212, 162, 76, 0.18);
   padding: 2px 6px;
@@ -442,17 +453,16 @@ body {
   100% { transform: scale(0.95) rotate(-2deg); opacity: 0.85; }
 }
 .librarian-name {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.72rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.78rem;
   color: var(--gold-bright);
-  letter-spacing: 0.15em;
-  font-weight: bold;
+  letter-spacing: 0.08em;
 }
 .librarian-hint {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.68rem;
-  color: rgba(232, 220, 196, 0.5);
-  font-style: italic;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: rgba(232, 220, 196, 0.6);
   margin-left: auto;
 }
 .librarian-close-btn {
@@ -472,10 +482,10 @@ body {
   background: rgba(255, 255, 255, 0.12);
 }
 .librarian-quote {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 0.92rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
   color: var(--parchment-light);
-  line-height: 1.5;
+  line-height: 1.6;
   font-style: italic;
   text-shadow: 0 1px 2px rgba(0,0,0,0.6);
   transition: opacity 0.3s;
@@ -526,10 +536,11 @@ body {
   justify-content: space-between;
 }
 .drawer-header .label {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.68rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.76rem;
   color: var(--gold-bright);
-  letter-spacing: 0.15em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .shelf-count-badge {
@@ -554,11 +565,10 @@ body {
 }
 .sl-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
 .sl-text {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 0.86rem;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
   color: var(--gold-bright);
-  font-style: italic;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .drawer-books-grid {
@@ -574,8 +584,8 @@ body {
   padding: 10px 16px;
   background: rgba(0, 0, 0, 0.3);
   border-top: 1px solid rgba(255, 255, 255, 0.05);
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.72rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
   color: rgba(232, 220, 196, 0.5);
   text-align: center;
 }
@@ -613,10 +623,11 @@ body {
   justify-content: space-between;
 }
 .shelf-bar-header .label {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.75rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.82rem;
   color: var(--gold-bright);
-  letter-spacing: 0.15em;
+  letter-spacing: 0.08em;
 }
 .shelf-close-btn {
   background: none;
@@ -652,15 +663,18 @@ body {
   transform: translateY(-2px);
 }
 .shelf-pill-card .spc-title {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.75rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.8rem;
   color: var(--gold-bright);
+  letter-spacing: 0.02em;
 }
 .shelf-pill-card .spc-category {
-  font-size: 0.65rem;
-  color: rgba(232,220,196,0.6);
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  color: rgba(232,220,196,0.65);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
 }
 
 /* ─── BOOK DETAIL DRAWER (Right Docked: Leaves Librarian Visible!) ─── */
@@ -737,10 +751,10 @@ body {
 }
 .cbc-star { color: #ffcc70; font-size: 0.9rem; margin-bottom: 4px; }
 .cbc-title {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.72rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.78rem;
   color: #f5ede0;
-  font-weight: bold;
   line-height: 1.25;
   margin-bottom: 4px;
 }
@@ -751,17 +765,18 @@ body {
   margin: 3px 0 5px;
 }
 .cbc-author {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 0.72rem;
+  font-family: var(--font-body);
+  font-size: 0.74rem;
   color: #d4a24c;
-  font-style: italic;
+  font-weight: 500;
 }
 .cbc-genre {
-  font-size: 0.55rem;
-  color: rgba(232, 220, 196, 0.5);
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  color: rgba(232, 220, 196, 0.6);
   text-transform: uppercase;
   margin-top: auto;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
 /* ─── Book Action Toast (Personalized Librarian response) ─ */
@@ -783,17 +798,17 @@ body {
 }
 .bat-icon { font-size: 1.1rem; }
 .bat-speaker {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.65rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.72rem;
   color: var(--gold-bright);
-  font-weight: bold;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
 }
 .bat-text {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 0.88rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
   color: var(--parchment-light);
-  line-height: 1.4;
+  line-height: 1.5;
   margin-top: 2px;
 }
 
@@ -845,16 +860,17 @@ body {
 }
 .feather-icon { font-size: 0.9rem; }
 .lb-title {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.68rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.74rem;
   color: var(--gold-bright);
-  letter-spacing: 0.15em;
+  letter-spacing: 0.08em;
 }
 .lb-quote {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: var(--font-body);
   font-size: 0.95rem;
   color: var(--parchment-light);
-  line-height: 1.5;
+  line-height: 1.6;
   font-style: italic;
 }
 
@@ -896,12 +912,12 @@ body {
   right: 6px;
   background: linear-gradient(135deg, #d4a24c, #ffb347);
   color: #120a05;
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.55rem;
-  font-weight: bold;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
   padding: 2px 6px;
   border-radius: 4px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   box-shadow: 0 2px 8px rgba(0,0,0,0.6);
   z-index: 2;
   pointer-events: none;
@@ -927,17 +943,19 @@ body {
   justify-content: center;
 }
 .book-card .info h4 {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.76rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.82rem;
   color: var(--parchment-light);
-  line-height: 1.3;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
 }
 .book-card:hover .info h4 { color: var(--gold-bright); }
 .book-card .info .author {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.74rem;
+  font-family: var(--font-body);
+  font-size: 0.76rem;
   color: var(--gold);
-  font-style: italic;
+  font-weight: 500;
   margin-top: 3px;
 }
 .book-card .info .rating {
@@ -981,8 +999,10 @@ body {
   border: 1px solid rgba(212, 162, 76, 0.25);
   border-radius: 8px;
   color: var(--parchment);
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.78rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
   cursor: pointer;
   transition: all 0.25s;
   display: inline-flex;
@@ -1038,8 +1058,9 @@ body {
   background: transparent;
   border: none;
   color: var(--parchment-light);
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--font-body);
   font-size: 1.15rem;
+  font-weight: 500;
   outline: none;
 }
 .search-input::placeholder { color: rgba(232,220,196,0.4); }
@@ -1053,8 +1074,8 @@ body {
   background: rgba(0,0,0,0.6);
   border-top: 1px solid rgba(255,255,255,0.08);
   text-align: center;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.72rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
   color: rgba(232,220,196,0.6);
   margin-top: auto;
 }
@@ -1103,8 +1124,8 @@ body {
 
 /* ─── Master Keith Chat Container & Message Styling ─── */
 .librarian-title-sub {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.72rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
   color: rgba(232, 220, 196, 0.6);
   font-style: italic;
 }
@@ -1149,10 +1170,11 @@ body {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(212, 162, 76, 0.25);
   color: rgba(232, 220, 196, 0.85);
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.62rem;
-  letter-spacing: 0.05em;
-  padding: 4px 8px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  padding: 4px 10px;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1166,10 +1188,11 @@ body {
 }
 
 .chat-msg {
+  font-family: var(--font-body);
   padding: 8px 12px;
   border-radius: 8px;
-  font-size: 0.85rem;
-  line-height: 1.45;
+  font-size: 0.88rem;
+  line-height: 1.5;
 }
 .chat-msg-user {
   align-self: flex-end;
@@ -1200,7 +1223,7 @@ body {
   border-radius: 6px;
   padding: 8px 12px;
   color: #f5ede0;
-  font-family: 'EB Garamond', serif;
+  font-family: var(--font-body);
   font-size: 0.88rem;
   outline: none;
   transition: all 0.2s ease;
@@ -1214,9 +1237,10 @@ body {
   background: rgba(45, 30, 18, 0.9);
   border: 1px solid #d4a24c;
   color: #ffcc70;
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
   padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
@@ -1255,4 +1279,51 @@ body {
   height: 100%;
   object-fit: cover;
   object-position: center;
+}
+.video-skip-btn {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  background: rgba(10, 7, 5, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 162, 76, 0.45);
+  color: var(--gold-bright);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  z-index: 10000;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+}
+.video-skip-btn:hover {
+  background: rgba(30, 20, 14, 0.95);
+  border-color: #ffd700;
+  color: #fff;
+  transform: scale(1.05);
+}
+.video-caption-badge {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 7, 5, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 162, 76, 0.45);
+  color: var(--parchment-light);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  padding: 8px 24px;
+  border-radius: 30px;
+  pointer-events: none;
+  z-index: 10000;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.85);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.8);
 }

@@ -398,9 +398,23 @@ function updateShelfGlows() {
 // ═══════════════════════════════════════════════════════════
 // AI CHAT & LIBRARIAN MOVEMENT CONTROLLER
 // ═══════════════════════════════════════════════════════════
+// MOVEMENT / RETRIEVAL VIDEO TRANSITION (Master Keith taking out book)
+// ═══════════════════════════════════════════════════════════
 let isLibrarianMoving = false;
 
-async function playLibrarianMovement(shelfTier = "mid", onComplete = null) {
+function skipLibrarianMovement(event) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+  const video = document.getElementById("movement-video");
+  if (video && isLibrarianMoving) {
+    video.pause();
+    if (video.onended) video.onended();
+  }
+}
+
+async function playLibrarianMovement(shelfTier = "down", onComplete = null, captionText = null) {
   if (isLibrarianMoving) {
     if (onComplete) onComplete();
     return;
@@ -409,17 +423,23 @@ async function playLibrarianMovement(shelfTier = "mid", onComplete = null) {
 
   const overlay = document.getElementById("movement-video-overlay");
   const video = document.getElementById("movement-video");
+  const captionEl = document.getElementById("video-caption-badge");
   if (!overlay || !video) {
     isLibrarianMoving = false;
     if (onComplete) onComplete();
     return;
   }
 
+  if (captionEl) {
+    captionEl.textContent = captionText || "✦ MASTER KEITH RETRIEVING FOLIO FROM ARCHIVES ✦";
+  }
+
   video.onended = null;
   video.onerror = null;
 
-  if (!video.src || !video.src.includes("going_on_upper_shelf.mp4")) {
-    video.src = "/static/assets/going_on_upper_shelf.mp4";
+  const targetSrc = "/static/assets/going%20to%20down%20shelf.mp4";
+  if (!video.src || (!video.src.includes("going%20to%20down%20shelf") && !video.src.includes("going to down shelf"))) {
+    video.src = targetSrc;
   }
 
   video.currentTime = 0;
@@ -437,27 +457,26 @@ async function playLibrarianMovement(shelfTier = "mid", onComplete = null) {
 
   const handleEnded = () => {
     video.pause();
-    // 1. Hold final frame for ~300ms
+    video.removeEventListener("timeupdate", onTimeUpdate);
     setTimeout(() => {
-      // 2. Cross-fade duration ~400ms
       overlay.style.opacity = "0";
       setTimeout(() => {
         overlay.style.display = "none";
         isLibrarianMoving = false;
         if (onComplete) onComplete();
-      }, 400);
-    }, 300);
+      }, 350);
+    }, 250);
   };
 
   video.onended = handleEnded;
   video.onerror = (e) => {
     console.warn("Video playback error:", e);
+    video.removeEventListener("timeupdate", onTimeUpdate);
     overlay.style.display = "none";
     isLibrarianMoving = false;
     if (onComplete) onComplete();
   };
 
-  // Wait until actual video frames are rendering to prevent any black screen flash
   const onTimeUpdate = () => {
     if (video.currentTime > 0.05) {
       video.removeEventListener("timeupdate", onTimeUpdate);
@@ -537,15 +556,14 @@ async function sendChatMessage() {
         const targetBookId = data.bookId;
         const shelfTier = data.shelfTier || "mid";
 
-        // Give 2 seconds for the user to read Master Keith's response in chat before moving
         setTimeout(() => {
           playLibrarianMovement(shelfTier, async () => {
             await openGenreDrawer(targetGenreId);
             if (targetBookId) {
               openBookModal(targetBookId);
             }
-          });
-        }, 2000);
+          }, `✦ MASTER KEITH RETRIEVING ARCHIVE TOMES ✦`);
+        }, 1600);
       }
     }
 
@@ -697,20 +715,20 @@ function createGothicCoverDataUrl(title, author, genre = "ARCHIVES") {
     <rect x="18" y="18" width="264" height="414" fill="rgba(0,0,0,0.3)" stroke="rgba(212,162,76,0.3)" stroke-width="1"/>
     
     <text x="150" y="70" text-anchor="middle" font-size="28">${emblem}</text>
-    <text x="150" y="100" text-anchor="middle" fill="#ffcc70" font-family="serif" font-size="10" letter-spacing="3">✦ ARCHIVE FOLIO ✦</text>
+    <text x="150" y="100" text-anchor="middle" fill="#ffcc70" font-family="'Outfit', sans-serif" font-weight="600" font-size="10" letter-spacing="3">✦ ARCHIVE FOLIO ✦</text>
 
     <line x1="60" y1="120" x2="240" y2="120" stroke="url(#gold)" stroke-width="1"/>
 
-    <text x="150" y="180" text-anchor="middle" fill="#f5ede0" font-family="Georgia, serif" font-weight="bold" font-size="16">
+    <text x="150" y="180" text-anchor="middle" fill="#f5ede0" font-family="'Outfit', sans-serif" font-weight="700" font-size="16">
       <tspan x="150" dy="0">${cleanTitle.slice(0, 22)}</tspan>
       ${cleanTitle.length > 22 ? `<tspan x="150" dy="22">${cleanTitle.slice(22, 44)}</tspan>` : ''}
     </text>
 
     <line x1="100" y1="260" x2="200" y2="260" stroke="#d4a24c" stroke-width="1"/>
 
-    <text x="150" y="300" text-anchor="middle" fill="#d4a24c" font-family="Georgia, serif" font-style="italic" font-size="13">by ${cleanAuthor.slice(0, 24)}</text>
+    <text x="150" y="300" text-anchor="middle" fill="#d4a24c" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="13">by ${cleanAuthor.slice(0, 24)}</text>
 
-    <text x="150" y="400" text-anchor="middle" fill="rgba(232,220,196,0.6)" font-family="sans-serif" font-size="9" letter-spacing="2">${cleanGenre}</text>
+    <text x="150" y="400" text-anchor="middle" fill="rgba(232,220,196,0.7)" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" letter-spacing="2">${cleanGenre}</text>
   </svg>`;
 
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
@@ -837,31 +855,49 @@ function renderBookActionButtons(bookId) {
   const actionsRow = document.getElementById("modal-actions");
   actionsRow.innerHTML = "";
 
-  // 1. PLACE ON READING DESK
+  // 1. PLACE ON READING DESK (Master Keith retrieves book and places on tabletop)
   if (bs.status !== "reading") {
     const btn = document.createElement("button");
     btn.className = "btn-action";
     btn.innerHTML = `📖 PLACE ON READING DESK`;
     btn.onclick = async () => {
       startReading(bookId);
-      // Fetch personalized response from Python
-      try {
-        const res = await fetch(`/api/librarian/action?action=reading&book_id=${bookId}`);
-        const data = await res.json();
-        setLibrarianText(data.message);
-        showActionToast(data.message);
-      } catch (e) {
-        const msg = `I've placed '${book?.title || "this book"}' on your reading desk!`;
-        setLibrarianText(msg);
-        showActionToast(msg);
-      }
       renderBookActionButtons(bookId);
       const statusEl = document.getElementById("modal-status");
-      statusEl.textContent = "Status: reading";
-      statusEl.className = "status-badge reading";
+      if (statusEl) {
+        statusEl.textContent = "Status: reading";
+        statusEl.className = "status-badge reading";
+      }
+
+      playLibrarianMovement("down", async () => {
+        try {
+          const res = await fetch(`/api/librarian/action?action=reading&book_id=${bookId}`);
+          const data = await res.json();
+          setLibrarianText(data.message);
+          showActionToast(data.message);
+        } catch (e) {
+          const msg = `I have retrieved '${book?.title || "this book"}' from the lower stacks and set it upon your reading desk!`;
+          setLibrarianText(msg);
+          showActionToast(msg);
+        }
+      }, `✦ MASTER KEITH RETRIEVING "${(book?.title || 'FOLIO').toUpperCase()}" ✦`);
     };
     actionsRow.appendChild(btn);
   }
+
+  // 1b. WATCH LIBRARIAN RETRIEVE FOLIO
+  const retrieveBtn = document.createElement("button");
+  retrieveBtn.className = "btn-action";
+  retrieveBtn.innerHTML = `🎬 RETRIEVE FOLIO`;
+  retrieveBtn.title = "Watch Master Keith go to the shelf and take out this book";
+  retrieveBtn.onclick = () => {
+    playLibrarianMovement("down", () => {
+      const msg = `Folio '${book?.title || "selected tome"}' retrieved from the shelf!`;
+      setLibrarianText(msg);
+      showActionToast(msg);
+    }, `✦ MASTER KEITH RETRIEVING "${(book?.title || 'FOLIO').toUpperCase()}" ✦`);
+  };
+  actionsRow.appendChild(retrieveBtn);
 
   // 2. MARK FINISHED
   if (bs.status !== "finished") {
@@ -1083,6 +1119,10 @@ document.addEventListener("keydown", (e) => {
     openSearch();
   }
   if (e.key === "Escape") {
+    if (isLibrarianMoving) {
+      skipLibrarianMovement(e);
+      return;
+    }
     closeSearch();
     closeGenreDrawer();
     closeBookModal();
